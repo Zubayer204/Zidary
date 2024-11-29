@@ -68,6 +68,9 @@ class Home(private val viewModel: HomeVM, private val journalComposeVM: JournalC
                             { navigator.pop() }
                         ))
                     }
+                    is HomeScreenEvent.NavigateToView -> {
+                        navigator.push(JournalView(event.entry, { navigator.pop() }))
+                    }
                     is HomeScreenEvent.EntryDeleted -> TODO()
                     is HomeScreenEvent.ShowError -> TODO()
                 }
@@ -98,6 +101,7 @@ class Home(private val viewModel: HomeVM, private val journalComposeVM: JournalC
                         entry.body,
                         formatDateTime(entry.entry_time.toLocalDateTime(zoneId)),
                         typography,
+                        onClick = { viewModel.onViewEntryClick(entry) },
                         onLongClick = { viewModel.onEntryLongPress(entry) },
                     )
                 }
@@ -124,7 +128,7 @@ class Home(private val viewModel: HomeVM, private val journalComposeVM: JournalC
                 JournalEntryBottomSheet(
                     entry = entry,
                     onDismiss = { viewModel.onDismissSheet() },
-                    onOpen = {},
+                    onOpen = { viewModel.onViewEntryClick(it) },
                     onEdit = { viewModel.onEditClick(entry.id) },
                     onDelete = {
                         entryToDelete = it

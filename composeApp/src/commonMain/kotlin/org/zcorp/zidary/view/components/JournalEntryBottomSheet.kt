@@ -22,7 +22,7 @@ import org.zcorp.zidary.db.JournalEntry
 fun JournalEntryBottomSheet(
     entry: JournalEntry,
     onDismiss: () -> Unit,
-    onOpen: (Long) -> Unit,
+    onOpen: (JournalEntry) -> Unit,
     onEdit: (Long) -> Unit,
     onDelete: (Long) -> Unit
 ) {
@@ -47,7 +47,7 @@ fun JournalEntryBottomSheet(
                 )
             },
             modifier = Modifier.clickable {
-                onOpen(entry.id)
+                onOpen(entry)
                 onDismiss()
             },
             colors = ListItemDefaults.colors(

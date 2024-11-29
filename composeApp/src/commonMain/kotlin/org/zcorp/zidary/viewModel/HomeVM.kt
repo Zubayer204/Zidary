@@ -35,6 +35,16 @@ class HomeVM(private val journalFactory: JournalFactory): ViewModel() {
         }
     }
 
+    fun onViewEntryClick(entry: JournalEntry) {
+        viewModelScope.launch {
+            try {
+                _events.send(HomeScreenEvent.NavigateToView(entry))
+            } catch (e: Exception) {
+                _events.send(HomeScreenEvent.ShowError("Failed to navigate to view: ${e.message}"))
+            }
+        }
+    }
+
 
     init {
         viewModelScope.launch {
@@ -75,5 +85,6 @@ sealed class HomeScreenEvent {
     data object EntryDeleted : HomeScreenEvent()
     data class ShowError(val message: String) : HomeScreenEvent()
     data class NavigateToEdit(val id: Long) : HomeScreenEvent()
+    data class NavigateToView(val entry: JournalEntry) : HomeScreenEvent()
 }
 
