@@ -87,7 +87,8 @@ class JournalComposeVM(
                     ).collect {entry ->
                         println("Updated Entry: $entry")
                         _events.send(JournalComposeEvent.EntryAdded)
-                        _state.update { it.copy(isEditMode = false) }
+                        // reset state for a clean editor next time
+                        resetState()
                     }
                 } else {
                     repository.insert(
@@ -96,6 +97,8 @@ class JournalComposeVM(
                         entryTime = currentState.entryTime
                     )
                     _events.send(JournalComposeEvent.EntryAdded)
+                    // reset state for a clean editor next time
+                    resetState()
                 }
             } catch (e: Exception) {
                 _events.send(JournalComposeEvent.ShowError("Failed to save entry: ${e.message}"))
