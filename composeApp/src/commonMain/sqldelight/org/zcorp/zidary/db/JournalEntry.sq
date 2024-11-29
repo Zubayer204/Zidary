@@ -1,0 +1,31 @@
+import kotlinx.datetime.Instant;
+
+CREATE TABLE JournalEntry (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    body TEXT NOT NULL,
+    entry_time INTEGER AS Instant NOT NULL,
+    created_at INTEGER AS Instant NOT NULL,
+    modified_at INTEGER AS Instant NOT NULL
+);
+
+insertJournalEntry:
+INSERT INTO JournalEntry (title, body, entry_time, created_at, modified_at)
+VALUES (?, ?, ?, ?, ?);
+
+selectLastInsertedRowId:
+SELECT last_insert_rowid();
+
+selectAllJournalEntries:
+SELECT *
+FROM JournalEntry
+ORDER BY entry_time DESC;
+
+selectJournalEntryById:
+SELECT * FROM JournalEntry WHERE id = ?;
+
+updateJournalEntry:
+UPDATE JournalEntry SET title = ?, body = ?, entry_time = ?, modified_at = ? WHERE id = ?;
+
+deleteJournalEntryById:
+DELETE FROM JournalEntry WHERE id = ?;

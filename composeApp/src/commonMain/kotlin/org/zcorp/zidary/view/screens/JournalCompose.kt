@@ -1,0 +1,164 @@
+package org.zcorp.zidary.view.screens
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import org.zcorp.zidary.view.components.DateTimeSelector
+import org.zcorp.zidary.view.theme.AppTypography
+import org.zcorp.zidary.viewModel.JournalComposeEvent
+import org.zcorp.zidary.viewModel.JournalComposeVM
+
+
+class JournalCompose(private val viewModel: JournalComposeVM, private val onNavigateBack: () -> Unit): Screen {
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    override fun Content() {
+        val typography = AppTypography()
+
+        val state by viewModel.state.collectAsState()
+        val snackBarHostState = remember { SnackbarHostState() }
+        val appBarTitle = if (state.isEditMode) "Edit Entry" else "New Entry"
+
+        LaunchedEffect(Unit) {
+            viewModel.events.collect {event ->
+                when (event) {
+                    is JournalComposeEvent.EntryAdded -> {
+                        onNavigateBack()
+                    }
+                    is JournalComposeEvent.ShowError -> {
+                        snackBarHostState.showSnackbar(event.message)
+                    }
+                }
+            }
+        }
+
+        Scaffold(topBar = {
+            TopAppBar(
+                title = { Text(appBarTitle) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        }) {padding ->
+            Column (
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(padding),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    DateTimeSelector(
+                        typography,
+                        initialDateTime = state.entryTime,
+                        onDateTimeSelected = viewModel::onEntryTimeChanged,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Button(
+                        onClick = {
+                            println("Done Button Clicked")
+                            viewModel.onSaveClick()
+                        },
+                        content = { Text("Done") },
+                        enabled = state.doneButtonState,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.3f)
+                        )
+                    )
+                }
+                HorizontalDivider(
+                    Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
+                Text(
+                    "Title",
+                    style = typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                OutlinedTextField(
+                    value = state.title,
+                    onValueChange = viewModel::onTitleChanged,
+                    placeholder = { Text("Enter a title") },
+                    maxLines = 2,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        focusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                Text(
+                    "Body",
+                    style = typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                OutlinedTextField(
+                    value = state.body,
+                    onValueChange = viewModel::onBodyChanged,
+                    placeholder = { Text("Let's hear it...") },
+                    maxLines = 1000,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        focusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                )
+            }
+        }
+
+    }
+}
