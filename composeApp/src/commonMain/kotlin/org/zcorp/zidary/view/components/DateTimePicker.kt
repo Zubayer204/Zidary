@@ -19,14 +19,14 @@ import org.zcorp.zidary.view.theme.AppTypography
 @Composable
 fun DateTimeSelector(
     typography: Typography = AppTypography(),
-    initialDateTime: Instant = Clock.System.now(),
+    initialDateTime: Instant,
     onDateTimeSelected: (Instant) -> Unit,
     color: Color,
     modifier: Modifier = Modifier,
 ) {
     val initialLocalDateTime = initialDateTime.toLocalDateTime(TimeZone.currentSystemDefault())
-    var selectedDate by remember { mutableStateOf(initialLocalDateTime.date) }
-    var selectedTime by remember { mutableStateOf(initialLocalDateTime.time) }
+    var selectedDate by remember(initialLocalDateTime) { mutableStateOf(initialLocalDateTime.date) }
+    var selectedTime by remember(initialLocalDateTime) { mutableStateOf(initialLocalDateTime.time) }
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
 

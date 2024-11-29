@@ -54,6 +54,7 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
 
         val state by viewModel.state.collectAsState()
         val snackBarHostState = remember { SnackbarHostState() }
+
         val appBarTitle = if (state.isEditMode) "Edit Entry" else "New Entry"
 
         LaunchedEffect(Unit) {
