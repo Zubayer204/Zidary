@@ -34,7 +34,7 @@ fun JournalEntryCard(
     modifier: Modifier = Modifier
 ) {
     Card (
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
             .combinedClickable(

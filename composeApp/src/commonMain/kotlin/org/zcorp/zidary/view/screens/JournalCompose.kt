@@ -52,7 +52,7 @@ import org.zcorp.zidary.view.theme.AppTypography
 import org.zcorp.zidary.viewModel.JournalComposeEvent
 import org.zcorp.zidary.viewModel.JournalComposeVM
 
-private val DEFAULT_ANIMATION_DURATION = 700 // in milliseconds
+private const val DEFAULT_ANIMATION_DURATION = 700 // in milliseconds
 
 class JournalCompose(private val viewModel: JournalComposeVM, private val onNavigateBack: () -> Unit): Screen {
     @OptIn(ExperimentalMaterial3Api::class)

@@ -10,9 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +53,7 @@ class Home(private val viewModel: HomeVM, private val journalComposeVM: JournalC
         val state by viewModel.state.collectAsState()
 
         val sheetState = rememberModalBottomSheetState()
+        val snackbarHostState = remember { SnackbarHostState() }
         var showDeleteConfirmation by remember { mutableStateOf(false) }
         var entryToDelete by remember { mutableStateOf(-1L) }
 
@@ -71,8 +73,12 @@ class Home(private val viewModel: HomeVM, private val journalComposeVM: JournalC
                     is HomeScreenEvent.NavigateToView -> {
                         navigator.push(JournalView(event.entry, { navigator.pop() }))
                     }
-                    is HomeScreenEvent.EntryDeleted -> TODO()
-                    is HomeScreenEvent.ShowError -> TODO()
+                    is HomeScreenEvent.EntryDeleted -> {
+                        snackbarHostState.showSnackbar("Entry Deleted")
+                    }
+                    is HomeScreenEvent.ShowError -> {
+                        snackbarHostState.showSnackbar("Error: ${event.message}")
+                    }
                 }
             }
         }
@@ -103,6 +109,7 @@ class Home(private val viewModel: HomeVM, private val journalComposeVM: JournalC
                         typography,
                         onClick = { viewModel.onViewEntryClick(entry) },
                         onLongClick = { viewModel.onEntryLongPress(entry) },
+                        modifier = Modifier.animateItem()
                     )
                 }
             }
