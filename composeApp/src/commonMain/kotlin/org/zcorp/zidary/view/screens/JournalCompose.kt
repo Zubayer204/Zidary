@@ -1,5 +1,12 @@
 package org.zcorp.zidary.view.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,6 +52,7 @@ import org.zcorp.zidary.view.theme.AppTypography
 import org.zcorp.zidary.viewModel.JournalComposeEvent
 import org.zcorp.zidary.viewModel.JournalComposeVM
 
+private val DEFAULT_ANIMATION_DURATION = 700 // in milliseconds
 
 class JournalCompose(private val viewModel: JournalComposeVM, private val onNavigateBack: () -> Unit): Screen {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -84,11 +92,12 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
-                    .padding(padding),
+                    .padding(padding)
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().height(36.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -98,20 +107,38 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
                         onDateTimeSelected = viewModel::onEntryTimeChanged,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    Button(
-                        onClick = {
-                            println("Done Button Clicked")
-                            viewModel.onSaveClick()
-                        },
-                        content = { Text("Done") },
-                        enabled = state.doneButtonState,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.3f)
+                    AnimatedVisibility(
+                        visible = state.doneButtonState,
+                        enter = slideInHorizontally(
+                            animationSpec = tween(DEFAULT_ANIMATION_DURATION),
+                            // slide in from right
+                            initialOffsetX = { width -> width }
+                        ) + fadeIn(
+                            animationSpec = tween(DEFAULT_ANIMATION_DURATION)
+                        ),
+                        exit = slideOutHorizontally(
+                            animationSpec = tween(DEFAULT_ANIMATION_DURATION),
+                            // slide out to right
+                            targetOffsetX = { width -> width }
+                        ) + fadeOut(
+                            animationSpec = tween(DEFAULT_ANIMATION_DURATION)
+                        ),
+                    ) {
+                        Button(
+                            onClick = {
+                                println("Done Button Clicked")
+                                viewModel.onSaveClick()
+                            },
+                            content = { Text("Done") },
+                            enabled = state.doneButtonState,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.3f)
+                            ),
                         )
-                    )
+                    }
                 }
                 HorizontalDivider(
                     Modifier.fillMaxWidth(),
