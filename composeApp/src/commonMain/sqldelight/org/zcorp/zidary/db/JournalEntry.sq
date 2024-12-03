@@ -29,3 +29,15 @@ UPDATE JournalEntry SET title = ?, body = ?, entry_time = ?, modified_at = ? WHE
 
 deleteJournalEntryById:
 DELETE FROM JournalEntry WHERE id = ?;
+
+selectEntriesByTimeRange:
+SELECT *
+FROM JournalEntry
+WHERE entry_time BETWEEN :startOfTime AND :endOfTime
+ORDER BY entry_time DESC;
+
+selectEntryDatesForTimeRange:
+SELECT DISTINCT entry_time
+FROM JournalEntry
+WHERE entry_time BETWEEN :startOfTime AND :endOfTime
+ORDER BY entry_time;

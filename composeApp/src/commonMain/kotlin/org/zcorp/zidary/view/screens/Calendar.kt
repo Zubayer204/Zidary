@@ -14,28 +14,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
-import org.zcorp.zidary.db.JournalEntry
 import org.zcorp.zidary.formatDateTime
 import org.zcorp.zidary.getTotalDaysInMonth
 import org.zcorp.zidary.view.components.CalendarDay
@@ -47,15 +43,9 @@ class Calendar(private val viewModel: CalendarVM): Screen {
     @Composable
     override fun Content() {
         val typography = AppTypography()
-        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
         // State for selected date and month
         val state by viewModel.state.collectAsState()
-
-        var currentMonth by remember { mutableStateOf(now.date) }
-
-        // Simulated journal entries (replace with actual data from viewModel)
-        val journalEntries = remember { mutableStateOf(listOf<JournalEntry>()) }
 
         Column(
             modifier = Modifier
@@ -70,19 +60,29 @@ class Calendar(private val viewModel: CalendarVM): Screen {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = {
-                    currentMonth = currentMonth.minus(1, DateTimeUnit.MONTH)
+                    val newDate = LocalDate(
+                        state.currentYear,
+                        state.currentMonth,
+                        1
+                    ).minus(1, DateTimeUnit.MONTH)
+                    viewModel.changeMonth(newDate.year, newDate.month)
                 }) {
                     Text("<", color = MaterialTheme.colorScheme.onBackground)
                 }
 
                 Text(
-                    text = "${currentMonth.month.name} ${currentMonth.year}",
+                    text = "${state.currentMonth.name} ${state.currentYear}",
                     style = typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
                 IconButton(onClick = {
-                    currentMonth = currentMonth.plus(1, DateTimeUnit.MONTH)
+                    val newDate = LocalDate(
+                        state.currentYear,
+                        state.currentMonth,
+                        1
+                    ).plus(1, DateTimeUnit.MONTH)
+                    viewModel.changeMonth(newDate.year, newDate.month)
                 }) {
                     Text(">", color = MaterialTheme.colorScheme.onBackground)
                 }
@@ -110,8 +110,8 @@ class Calendar(private val viewModel: CalendarVM): Screen {
                 }
 
                 // Calendar dates
-                val firstDayOfMonth = LocalDate(currentMonth.year, currentMonth.monthNumber, 1)
-                val totalDaysInMonth = getTotalDaysInMonth(currentMonth)
+                val firstDayOfMonth = LocalDate(state.currentYear, state.currentMonth, 1)
+                val totalDaysInMonth = getTotalDaysInMonth(firstDayOfMonth)
                 val firstDayOfWeek = firstDayOfMonth.dayOfWeek.ordinal + 1 // initial ordinal is 0, so we add one to it
 
                 // Empty spaces before first day
@@ -120,11 +120,14 @@ class Calendar(private val viewModel: CalendarVM): Screen {
                 }
 
                 // Actual dates
-                println("Total days in month: $totalDaysInMonth")
+                println("datesWithEntries: ${state.datesWithEntries}")
                 items(totalDaysInMonth) { day ->
-                    val date = LocalDate(currentMonth.year, currentMonth.month, day + 1)
+                    println("125 ${state.currentYear} ${state.currentMonth} $day")
+                    val date = LocalDate(state.currentYear, state.currentMonth, day + 1)
                     val isSelected = date == state.selectedDate
-                    val hasEntries = viewModel.hasEntriesForDate(date)
+                    val hasEntries = state.datesWithEntries.contains(date)
+
+                    println("$date HasEntries: $hasEntries")
 
                     CalendarDay(
                         day = day + 1,
@@ -135,23 +138,12 @@ class Calendar(private val viewModel: CalendarVM): Screen {
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Entries for selected date
-            Text(
-                text = "Entries for ${state.selectedDate}",
-                style = typography.titleMedium,
-                modifier = Modifier.padding(vertical = 8.dp),
-                color = MaterialTheme.colorScheme.onBackground
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.onBackground.copy(0.5f)
             )
 
             LazyColumn {
-                val selectedDateEntries = journalEntries.value.filter {
-                    val entryDate = it.entry_time.toLocalDateTime(TimeZone.currentSystemDefault()).date
-                    entryDate == state.selectedDate
-                }
-
-                items(state.entries) { entry ->
+                items(state.selectedDateEntries) { entry ->
                     JournalEntryCard(
                         title = entry.title,
                         content = entry.body,
