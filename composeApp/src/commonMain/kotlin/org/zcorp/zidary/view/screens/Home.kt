@@ -33,9 +33,9 @@ import androidx.compose.ui.zIndex
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.zcorp.zidary.formatDateTime
 import org.zcorp.zidary.view.components.DeleteConfirmationDialog
 import org.zcorp.zidary.view.components.GlowingFAB
 import org.zcorp.zidary.view.components.JournalEntryBottomSheet
@@ -160,12 +160,4 @@ class Home(private val viewModel: HomeVM, private val journalComposeVM: JournalC
             )
         }
     }
-}
-
-private fun formatDateTime(dateTime: LocalDateTime): String {
-    val month = dateTime.month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
-    val day = dateTime.dayOfMonth.toString().padStart(2, '0')
-    val hour = dateTime.hour.toString().padStart(2, '0')
-    val minute = dateTime.minute.toString().padStart(2, '0')
-    return "$day $month, ${dateTime.year}  $hour:$minute"
 }

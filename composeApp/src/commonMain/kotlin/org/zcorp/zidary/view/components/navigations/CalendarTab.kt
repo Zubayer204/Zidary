@@ -9,8 +9,9 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import org.zcorp.zidary.view.screens.Calendar
+import org.zcorp.zidary.viewModel.CalendarVM
 
-object CalendarTab: Tab {
+class CalendarTab(private val calendarVM: CalendarVM): Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -28,6 +29,6 @@ object CalendarTab: Tab {
 
     @Composable
     override fun Content() {
-        Navigator(screen = Calendar())
+        Navigator(screen = Calendar(viewModel = calendarVM))
     }
 }

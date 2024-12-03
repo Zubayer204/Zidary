@@ -29,8 +29,8 @@ import org.zcorp.zidary.view.components.navigations.HomeTab
 import org.zcorp.zidary.view.components.navigations.SettingsTab
 import org.zcorp.zidary.view.components.navigations.SyncTab
 import org.zcorp.zidary.view.components.navigations.TabNavigationItem
-import org.zcorp.zidary.view.screens.JournalCompose
 import org.zcorp.zidary.view.theme.AppTheme
+import org.zcorp.zidary.viewModel.CalendarVM
 import org.zcorp.zidary.viewModel.HomeVM
 import org.zcorp.zidary.viewModel.JournalComposeVM
 
@@ -40,6 +40,7 @@ fun App(db: ZidaryDatabase) {
     val journalFactory = JournalFactory(db)
     val journalComposeVM = remember { JournalComposeVM(journalFactory) }
     val homeVM = remember { HomeVM(journalFactory) }
+    val calendarVM = remember { CalendarVM(journalFactory) }
     TabNavigator(HomeTab(homeVM, journalComposeVM)) {
         AppTheme (darkTheme = true) {
             Scaffold (
@@ -48,7 +49,7 @@ fun App(db: ZidaryDatabase) {
                     Column {
                         BottomNavigation (backgroundColor = MaterialTheme.colorScheme.surfaceContainer, ) {
                             TabNavigationItem(HomeTab(homeVM, journalComposeVM))
-                            TabNavigationItem(CalendarTab)
+                            TabNavigationItem(CalendarTab(calendarVM))
                             TabNavigationItem(SyncTab)
                             TabNavigationItem(SettingsTab)
                         }

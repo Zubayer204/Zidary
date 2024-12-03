@@ -1,7 +1,6 @@
 package org.zcorp.zidary.view.screens
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -9,7 +8,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -36,17 +36,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.zcorp.zidary.view.components.DateTimeSelector
 import org.zcorp.zidary.view.theme.AppTypography
 import org.zcorp.zidary.viewModel.JournalComposeEvent
@@ -62,6 +59,7 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
 
         val state by viewModel.state.collectAsState()
         val snackBarHostState = remember { SnackbarHostState() }
+        val bodyFocusRequester = remember { FocusRequester() }
 
         val appBarTitle = if (state.isEditMode) "Edit Entry" else "New Entry"
 
@@ -162,7 +160,16 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
                         focusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            bodyFocusRequester.requestFocus()
+                        }
+                    )
                 )
                 Text(
                     "Body",
@@ -183,7 +190,14 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
                         focusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { viewModel.onSaveClick() }
+                    )
                 )
             }
         }
