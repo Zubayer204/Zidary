@@ -47,110 +47,117 @@ class Calendar(private val viewModel: CalendarVM): Screen {
         // State for selected date and month
         val state by viewModel.state.collectAsState()
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
         ) {
-            // Month selector
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = {
-                    val newDate = LocalDate(
-                        state.currentYear,
-                        state.currentMonth,
-                        1
-                    ).minus(1, DateTimeUnit.MONTH)
-                    viewModel.changeMonth(newDate.year, newDate.month)
-                }) {
-                    Text("<", color = MaterialTheme.colorScheme.onBackground)
-                }
+            item {
+                // Month selector
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = {
+                        val newDate = LocalDate(
+                            state.currentYear,
+                            state.currentMonth,
+                            1
+                        ).minus(1, DateTimeUnit.MONTH)
+                        viewModel.changeMonth(newDate.year, newDate.month)
+                    }) {
+                        Text("<", color = MaterialTheme.colorScheme.onBackground)
+                    }
 
-                Text(
-                    text = "${state.currentMonth.name} ${state.currentYear}",
-                    style = typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-
-                IconButton(onClick = {
-                    val newDate = LocalDate(
-                        state.currentYear,
-                        state.currentMonth,
-                        1
-                    ).plus(1, DateTimeUnit.MONTH)
-                    viewModel.changeMonth(newDate.year, newDate.month)
-                }) {
-                    Text(">", color = MaterialTheme.colorScheme.onBackground)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Calendar grid
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(7),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(350.dp)
-            ) {
-                // Weekday headers
-                items(7) { dayIndex ->
-                    val dayName = daysOfWeek[dayIndex]
                     Text(
-                        text = dayName,
-                        modifier = Modifier.padding(8.dp),
-                        style = typography.labelMedium,
-                        textAlign = TextAlign.Center,
+                        text = "${state.currentMonth.name} ${state.currentYear}",
+                        style = typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground
                     )
+
+                    IconButton(onClick = {
+                        val newDate = LocalDate(
+                            state.currentYear,
+                            state.currentMonth,
+                            1
+                        ).plus(1, DateTimeUnit.MONTH)
+                        viewModel.changeMonth(newDate.year, newDate.month)
+                    }) {
+                        Text(">", color = MaterialTheme.colorScheme.onBackground)
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            // Calendar grid
+            item {
+                // Weekday headers
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    daysOfWeek.forEach { dayName ->
+                        Text(
+                            text = dayName,
+                            modifier = Modifier.weight(1f),
+                            style = typography.labelMedium,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // Calendar dates
                 val firstDayOfMonth = LocalDate(state.currentYear, state.currentMonth, 1)
                 val totalDaysInMonth = getTotalDaysInMonth(firstDayOfMonth)
                 val firstDayOfWeek = firstDayOfMonth.dayOfWeek.ordinal + 1 // initial ordinal is 0, so we add one to it
 
-                // Empty spaces before first day
-                items(firstDayOfWeek) {
-                    Box(modifier = Modifier.padding(8.dp))
-                }
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(7),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(350.dp)
+                ) {
+                    // Empty spaces before first day
+                    items(firstDayOfWeek) {
+                        Box(modifier = Modifier.padding(8.dp))
+                    }
 
-                // Actual dates
-                println("datesWithEntries: ${state.datesWithEntries}")
-                items(totalDaysInMonth) { day ->
-                    println("125 ${state.currentYear} ${state.currentMonth} $day")
-                    val date = LocalDate(state.currentYear, state.currentMonth, day + 1)
-                    val isSelected = date == state.selectedDate
-                    val hasEntries = state.datesWithEntries.contains(date)
+                    // Actual dates
+                    items(totalDaysInMonth) { day ->
+                        val date = LocalDate(state.currentYear, state.currentMonth, day + 1)
+                        val isSelected = date == state.selectedDate
+                        val hasEntries = state.datesWithEntries.contains(date)
 
-                    println("$date HasEntries: $hasEntries")
+                        println("$date HasEntries: $hasEntries")
 
-                    CalendarDay(
-                        day = day + 1,
-                        isSelected = isSelected,
-                        hasEntries = hasEntries,
-                        onClick = { viewModel.onSelectDate(date) }
-                    )
+                        CalendarDay(
+                            day = day + 1,
+                            isSelected = isSelected,
+                            hasEntries = hasEntries,
+                            onClick = { viewModel.onSelectDate(date) }
+                        )
+                    }
                 }
             }
 
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.onBackground.copy(0.5f)
-            )
+            item {
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.onBackground.copy(0.5f)
+                )
+            }
 
-            LazyColumn {
-                items(state.selectedDateEntries) { entry ->
-                    JournalEntryCard(
-                        title = entry.title,
-                        content = entry.body,
-                        datetime = formatDateTime(entry.entry_time.toLocalDateTime(TimeZone.currentSystemDefault())),
-                        typography = typography
-                    )
-                }
+            items(state.selectedDateEntries) { entry ->
+                JournalEntryCard(
+                    title = entry.title,
+                    content = entry.body,
+                    datetime = formatDateTime(entry.entry_time.toLocalDateTime(TimeZone.currentSystemDefault())),
+                    typography = typography
+                )
             }
         }
     }
