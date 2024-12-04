@@ -14,18 +14,28 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -35,17 +45,52 @@ import kotlinx.datetime.toLocalDateTime
 import org.zcorp.zidary.formatDateTime
 import org.zcorp.zidary.getTotalDaysInMonth
 import org.zcorp.zidary.view.components.CalendarDay
+import org.zcorp.zidary.view.components.DeleteConfirmationDialog
+import org.zcorp.zidary.view.components.JournalEntryBottomSheet
 import org.zcorp.zidary.view.components.JournalEntryCard
 import org.zcorp.zidary.view.theme.AppTypography
+import org.zcorp.zidary.viewModel.CalendarScreenEvent
 import org.zcorp.zidary.viewModel.CalendarVM
+import org.zcorp.zidary.viewModel.HomeScreenEvent
+import org.zcorp.zidary.viewModel.JournalComposeVM
 
-class Calendar(private val viewModel: CalendarVM): Screen {
+class Calendar(private val viewModel: CalendarVM, private val journalComposeVM: JournalComposeVM): Screen {
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val typography = AppTypography()
+        val navigator = LocalNavigator.currentOrThrow
 
         // State for selected date and month
         val state by viewModel.state.collectAsState()
+
+        val sheetState = rememberModalBottomSheetState()
+        val snackbarHostState = remember { SnackbarHostState() }
+        var showDeleteConfirmation by remember { mutableStateOf(false) }
+        var entryToDelete by remember { mutableStateOf(-1L) }
+
+        LaunchedEffect(Unit) {
+            viewModel.events.collect { event ->
+                when (event) {
+                    is CalendarScreenEvent.NavigateToEdit -> {
+                        navigator.push(JournalEdit(
+                            event.id,
+                            journalComposeVM,
+                            { navigator.pop() }
+                        ))
+                    }
+                    is CalendarScreenEvent.NavigateToView -> {
+                        navigator.push(JournalView(event.entry, { navigator.pop() }))
+                    }
+                    is CalendarScreenEvent.EntryDeleted -> {
+                        snackbarHostState.showSnackbar("Entry Deleted")
+                    }
+                    is CalendarScreenEvent.ShowError -> {
+                        snackbarHostState.showSnackbar("Error: ${event.message}")
+                    }
+                }
+            }
+        }
 
         LazyColumn(
             modifier = Modifier
@@ -155,10 +200,45 @@ class Calendar(private val viewModel: CalendarVM): Screen {
                 JournalEntryCard(
                     title = entry.title,
                     content = entry.body,
+                    onClick = { viewModel.onViewEntryClick(entry) },
+                    onLongClick = { viewModel.onEntryLongPress(entry) },
                     datetime = formatDateTime(entry.entry_time.toLocalDateTime(TimeZone.currentSystemDefault())),
                     typography = typography
                 )
             }
+        }
+
+        state.selectedEntry?.let { entry ->
+            ModalBottomSheet(
+                onDismissRequest = { viewModel.onDismissSheet() },
+                sheetState = sheetState
+            ) {
+                JournalEntryBottomSheet(
+                    entry = entry,
+                    onDismiss = { viewModel.onDismissSheet() },
+                    onOpen = { viewModel.onViewEntryClick(it) },
+                    onEdit = { viewModel.onEditClick(entry.id) },
+                    onDelete = {
+                        entryToDelete = it
+                        showDeleteConfirmation = true
+                    }
+                )
+            }
+        }
+
+        // Delete Confirmation Dialog
+        if (showDeleteConfirmation) {
+            DeleteConfirmationDialog(
+                onDismissButtonClick = {
+                    showDeleteConfirmation = false
+                    entryToDelete = -1L
+                },
+                confirmButtonOnClick = {
+                    viewModel.deleteEntry(entryToDelete)
+                    showDeleteConfirmation = false
+                    entryToDelete = -1L
+                }
+            )
         }
     }
 

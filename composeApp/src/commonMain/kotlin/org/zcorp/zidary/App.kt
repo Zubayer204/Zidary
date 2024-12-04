@@ -49,7 +49,7 @@ fun App(db: ZidaryDatabase) {
                     Column {
                         BottomNavigation (backgroundColor = MaterialTheme.colorScheme.surfaceContainer, ) {
                             TabNavigationItem(HomeTab(homeVM, journalComposeVM))
-                            TabNavigationItem(CalendarTab(calendarVM))
+                            TabNavigationItem(CalendarTab(calendarVM, journalComposeVM))
                             TabNavigationItem(SyncTab)
                             TabNavigationItem(SettingsTab)
                         }
