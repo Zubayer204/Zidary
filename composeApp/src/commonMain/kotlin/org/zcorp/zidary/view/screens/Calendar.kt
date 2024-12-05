@@ -1,6 +1,7 @@
 package org.zcorp.zidary.view.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -21,6 +24,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,10 +42,13 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import org.zcorp.zidary.formatDateTime
 import org.zcorp.zidary.getTotalDaysInMonth
@@ -119,7 +127,10 @@ class Calendar(private val viewModel: CalendarVM, private val journalComposeVM: 
                     Text(
                         text = "${state.currentMonth.name} ${state.currentYear}",
                         style = typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.clickable {
+                            viewModel.onDatePickerStatusChange(true)
+                        }
                     )
 
                     IconButton(onClick = {
@@ -178,7 +189,7 @@ class Calendar(private val viewModel: CalendarVM, private val journalComposeVM: 
                         val isSelected = date == state.selectedDate
                         val hasEntries = state.datesWithEntries.contains(date)
 
-                        println("$date HasEntries: $hasEntries")
+//                        println("$date HasEntries: $hasEntries")
 
                         CalendarDay(
                             day = day + 1,
@@ -239,6 +250,41 @@ class Calendar(private val viewModel: CalendarVM, private val journalComposeVM: 
                     entryToDelete = -1L
                 }
             )
+        }
+
+        // Date Picker Dialog
+        if (state.showDatePicker) {
+            val datePickerState = rememberDatePickerState(
+                initialSelectedDateMillis = state.selectedDate.toEpochDays().toLong() * 24 * 60 * 60 * 1000
+            )
+
+            DatePickerDialog(
+                onDismissRequest = {  viewModel.onDatePickerStatusChange(false) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        datePickerState.selectedDateMillis?.let {
+                            val instant = Instant.fromEpochMilliseconds(it)
+                            val date = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
+                            viewModel.onSelectDate(date)
+                            if (date.year != state.currentYear || date.month != state.currentMonth) {
+                                viewModel.changeMonth(date.year, date.month)
+                            }
+                        }
+                        viewModel.onDatePickerStatusChange(false)
+                    }) {
+                        Text("OK")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { viewModel.onDatePickerStatusChange(false) }) {
+                        Text("Cancel")
+                    }
+                }
+            ) {
+                DatePicker(
+                    state = datePickerState
+                )
+            }
         }
     }
 

@@ -33,6 +33,10 @@ class CalendarVM(private val journalFactory: JournalFactory) : ViewModel() {
         onSelectDate(now)
     }
 
+    fun onDatePickerStatusChange(show: Boolean) {
+        _state.update { it.copy(showDatePicker = show) }
+    }
+
     fun onEntryLongPress(entry: JournalEntry) {
         _state.update { it.copy(selectedEntry = entry) }
     }
@@ -128,6 +132,7 @@ data class CalendarScreenState(
     val selectedDateEntries: List<JournalEntry> = emptyList(),
     val selectedEntry: JournalEntry? = null,
     val isLoading: Boolean = true,
+    val showDatePicker: Boolean = false,
     val currentYear: Int = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault()).year,
     val currentMonth: Month = Clock.System.now()
