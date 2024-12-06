@@ -32,6 +32,13 @@ interface JournalFactoryInterface {
     fun getEntriesByMonth(year: Int, month: Month): Flow<List<JournalEntry>>
     fun getEntriesByDate(date: LocalDate): Flow<List<JournalEntry>>
     fun getEntryDatesForMonth(year: Int, month: Month): Flow<List<LocalDate>>
+
+    /**
+     * @return the number of rows present in the JournalEntry table. 0L if there are no entries
+     *
+     * @throws IllegalStateException if when executed this query has multiple rows in its result set.
+     */
+    fun getTotalEntries(): Long
 }
 
 class JournalFactory(database: ZidaryDatabase): JournalFactoryInterface {
@@ -115,4 +122,7 @@ class JournalFactory(database: ZidaryDatabase): JournalFactoryInterface {
             }
     }
 
+    override fun getTotalEntries(): Long {
+        return queries.selectTotalEntries().executeAsOneOrNull() ?: 0L
+    }
 }

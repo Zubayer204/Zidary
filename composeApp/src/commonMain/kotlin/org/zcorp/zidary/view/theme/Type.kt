@@ -2,6 +2,7 @@ package org.zcorp.zidary.view.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -10,6 +11,7 @@ import zidary.composeapp.generated.resources.Epilogue_Bold
 import zidary.composeapp.generated.resources.Epilogue_Italic
 import zidary.composeapp.generated.resources.Epilogue_Regular
 import zidary.composeapp.generated.resources.Epilogue_SemiBold
+import zidary.composeapp.generated.resources.GreatVibes_Regular
 import zidary.composeapp.generated.resources.Res
 
 @Composable
@@ -19,6 +21,13 @@ fun Epilogue(): FontFamily {
         Font(Res.font.Epilogue_Bold, FontWeight.Bold, FontStyle.Normal),
         Font(Res.font.Epilogue_SemiBold, FontWeight.SemiBold, FontStyle.Normal),
         Font(Res.font.Epilogue_Italic, FontWeight.Normal, FontStyle.Italic),
+    )
+}
+
+@Composable
+fun GreatVibes(): FontFamily {
+    return FontFamily(
+        Font(Res.font.GreatVibes_Regular, FontWeight.Normal, FontStyle.Normal),
     )
 }
 

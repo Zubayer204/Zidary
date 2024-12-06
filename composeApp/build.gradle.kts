@@ -73,6 +73,12 @@ kotlin {
             implementation(compose.material)
             implementation(compose.materialIconsExtended)
             implementation(libs.material3.window.size.multiplatform)
+
+            // For storing settings across sessions
+            implementation(libs.multiplatform.settings.no.arg)
+
+            // For beautiful text animations
+            implementation(libs.texty)
         }
     }
 }

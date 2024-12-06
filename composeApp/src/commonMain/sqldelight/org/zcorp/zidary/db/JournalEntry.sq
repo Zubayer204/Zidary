@@ -41,3 +41,6 @@ SELECT DISTINCT entry_time
 FROM JournalEntry
 WHERE entry_time BETWEEN :startOfTime AND :endOfTime
 ORDER BY entry_time;
+
+selectTotalEntries:
+SELECT COUNT(*) FROM JournalEntry;

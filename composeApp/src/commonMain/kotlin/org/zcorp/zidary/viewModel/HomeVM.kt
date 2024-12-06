@@ -73,6 +73,10 @@ class HomeVM(private val journalFactory: JournalFactory): ViewModel() {
             }
         }
     }
+
+    fun totalEntries(): Long {
+        return journalFactory.getTotalEntries()
+    }
 }
 
 data class HomeScreenState(

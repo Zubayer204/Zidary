@@ -28,7 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -40,7 +42,9 @@ import org.zcorp.zidary.view.components.DeleteConfirmationDialog
 import org.zcorp.zidary.view.components.GlowingFAB
 import org.zcorp.zidary.view.components.JournalEntryBottomSheet
 import org.zcorp.zidary.view.components.JournalEntryCard
+import org.zcorp.zidary.view.components.TextEntryAnimation
 import org.zcorp.zidary.view.theme.AppTypography
+import org.zcorp.zidary.view.theme.GreatVibes
 import org.zcorp.zidary.viewModel.HomeScreenEvent
 import org.zcorp.zidary.viewModel.HomeVM
 import org.zcorp.zidary.viewModel.JournalComposeVM
@@ -88,6 +92,25 @@ class Home(private val viewModel: HomeVM, private val journalComposeVM: JournalC
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
+            if (viewModel.totalEntries() == 0L) {
+                TextEntryAnimation(
+                    headlineText = "Let's write",
+                    subheadlineTextList = listOf("thoughts...", "memories...", "stories...", "life..."),
+                    headlineTextStyle = TextStyle(
+                        fontFamily = GreatVibes(),
+                        fontSize = 84.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    ),
+                    subheadlineTextStyle = TextStyle(
+                        fontFamily = GreatVibes(),
+                        fontSize = 64.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    ),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                )
+            }
             LazyColumn (
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(vertical = 16.dp),
