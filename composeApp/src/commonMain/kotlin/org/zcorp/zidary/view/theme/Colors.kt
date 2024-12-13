@@ -2,14 +2,6 @@ package org.zcorp.zidary.view.theme
 
 import androidx.compose.ui.graphics.Color
 
-val coralPink = Color(0xFFFF8F8F)
-val green = Color(0xFFB7EEA5)
-val cyan = Color(0xFF5CE1E6)
-val darkBlue = Color(0xFF121C24)
-val lightGrey = Color(0xFF8A9EBF)
-val lightBlue = Color(0xFF1C2936)
-val white = Color(0xFFF7FAFA)
-
 val primaryLight = Color(0xFF28638A)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFCAE6FF)

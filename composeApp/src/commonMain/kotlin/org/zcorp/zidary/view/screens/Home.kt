@@ -95,7 +95,7 @@ class Home(private val viewModel: HomeVM, private val journalComposeVM: JournalC
             if (viewModel.totalEntries() == 0L) {
                 TextEntryAnimation(
                     headlineText = "Let's write",
-                    subheadlineTextList = listOf("thoughts...", "memories...", "stories...", "life..."),
+                    subheadlineTextList = listOf("", "thoughts...", "memories...", "stories...", "life..."),
                     headlineTextStyle = TextStyle(
                         fontFamily = GreatVibes(),
                         fontSize = 84.sp,

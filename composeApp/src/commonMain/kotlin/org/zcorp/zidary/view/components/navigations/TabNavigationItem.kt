@@ -11,9 +11,6 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
-import org.zcorp.zidary.view.theme.lightBlue
-import org.zcorp.zidary.view.theme.lightGrey
-import org.zcorp.zidary.view.theme.white
 
 @Composable
 fun RowScope.TabNavigationItem(tab: Tab) {
