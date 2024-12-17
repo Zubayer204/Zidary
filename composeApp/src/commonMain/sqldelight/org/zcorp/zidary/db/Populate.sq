@@ -1,44 +1,44 @@
--- INSERT INTO JournalEntry (title, body, entry_time, created_at, modified_at)
--- VALUES
---     (
---         "Morning Reflection",
---         "Today started with a beautiful sunrise. I spent 20 minutes meditating and felt energized for the day ahead. Made myself a healthy breakfast and planned out my daily tasks.",
---         1703149200000, -- December 21, 2023 08:00:00 AM
---         1703149200000, -- Created same time
---         1703149200000  -- Modified same time
---     ),
---     (
---         "Productive Afternoon",
---         "Completed the major project milestone at work. The team was very collaborative, and we managed to solve some challenging technical issues. Need to follow up on the documentation tomorrow.",
---         1703170800000, -- December 21, 2023 02:00:00 PM
---         1703170800000,
---         1703170800000
---     ),
---     (
---         "Evening Thoughts",
---         "Had a great workout session at the gym. Made progress on my reading goal - finished chapter 5 of 'Clean Code'. Feeling tired but satisfied with today's accomplishments.",
---         1703224800000, -- December 22, 2023 05:00:00 AM
---         1703224800000,
---         1703224800000
---     ),
---     (
---         "Weekend Plans",
---         "Looking forward to the weekend. Planning to try that new hiking trail and catch up with friends over coffee. Weather forecast looks perfect for outdoor activities.",
---         1703262000000, -- December 22, 2023 03:00:00 PM
---         1703262000000,
---         1703262000000
---     ),
---     (
---         "Project Ideas",
---         "Brainstormed some new features for the app. The user feedback from last week's release gave me some interesting perspectives. Made a rough sketch of the new UI layout.",
---         1703307600000, -- December 23, 2023 03:00:00 AM
---         1703307600000,
---         1703307600000
---     ),
---     (
---         "Family Time",
---         "Spent the afternoon with family. Mom's cooking was amazing as always. We played board games and shared stories. These moments are precious and remind me of what's truly important.",
---         1703350800000, -- December 23, 2023 03:00:00 PM
---         1703350800000,
---         1703350800000
---     );
+INSERT INTO JournalEntry (title, body, entry_time, created_at, modified_at)
+VALUES
+    (
+        "Morning Reflection",
+        "Today started with a beautiful sunrise. I spent 20 minutes meditating and felt energized for the day ahead. Made myself a healthy breakfast and planned out my daily tasks.",
+        1703149200000, -- December 21, 2023 08:00:00 AM
+        1703149200000, -- Created same time
+        1703149200000  -- Modified same time
+    ),
+    (
+        "Productive Afternoon",
+        "Completed the major project milestone at work. The team was very collaborative, and we managed to solve some challenging technical issues. Need to follow up on the documentation tomorrow.",
+        1703170800000, -- December 21, 2023 02:00:00 PM
+        1703170800000,
+        1703170800000
+    ),
+    (
+        "Evening Thoughts",
+        "Had a great workout session at the gym. Made progress on my reading goal - finished chapter 5 of 'Clean Code'. Feeling tired but satisfied with today's accomplishments.",
+        1703224800000, -- December 22, 2023 05:00:00 AM
+        1703224800000,
+        1703224800000
+    ),
+    (
+        "Weekend Plans",
+        "Looking forward to the weekend. Planning to try that new hiking trail and catch up with friends over coffee. Weather forecast looks perfect for outdoor activities.",
+        1703262000000, -- December 22, 2023 03:00:00 PM
+        1703262000000,
+        1703262000000
+    ),
+    (
+        "Project Ideas",
+        "Brainstormed some new features for the app. The user feedback from last week's release gave me some interesting perspectives. Made a rough sketch of the new UI layout.",
+        1703307600000, -- December 23, 2023 03:00:00 AM
+        1703307600000,
+        1703307600000
+    ),
+    (
+        "Family Time",
+        "Spent the afternoon with family. Mom's cooking was amazing as always. We played board games and shared stories. These moments are precious and remind me of what's truly important.",
+        1703350800000, -- December 23, 2023 03:00:00 PM
+        1703350800000,
+        1703350800000
+    );

@@ -10,11 +10,14 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import cafe.adriel.voyager.transitions.FadeTransition
 import cafe.adriel.voyager.transitions.SlideTransition
+import org.zcorp.zidary.model.data.JournalFactory
+import org.zcorp.zidary.model.database.LocalDatabase
 import org.zcorp.zidary.view.screens.Sync
+import org.zcorp.zidary.viewModel.SyncVM
 import zidary.composeapp.generated.resources.Res
 import zidary.composeapp.generated.resources.sync
 
-object SyncTab: Tab {
+class SyncTab: Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -33,7 +36,10 @@ object SyncTab: Tab {
 
     @Composable
     override fun Content() {
-        Navigator(screen = Sync()) {navigator: Navigator ->
+        val db = LocalDatabase.current
+        val journalFactory = JournalFactory(db)
+        val syncVM = SyncVM(journalFactory)
+        Navigator(screen = Sync(syncVM)) { navigator: Navigator ->
             FadeTransition(navigator)
         }
     }

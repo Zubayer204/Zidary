@@ -1,9 +1,12 @@
-package org.zcorp.zidary
+package org.zcorp.zidary.utils
 
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.until
 
 fun formatDateTime(dateTime: LocalDateTime): String {
@@ -18,4 +21,9 @@ fun getTotalDaysInMonth(date: LocalDate): Int {
     val start = LocalDate(date.year, date.monthNumber, 1)
     val end = start.plus(1, DateTimeUnit.MONTH)
     return start.until(end, DateTimeUnit.DAY)
+}
+
+fun epochMillisecondsToLocalDate(epochMillis: Long, timeZone: TimeZone): LocalDate {
+    val instant = Instant.fromEpochMilliseconds(epochMillis)
+    return instant.toLocalDateTime(timeZone).date
 }

@@ -124,7 +124,6 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
                     ) {
                         Button(
                             onClick = {
-                                println("Done Button Clicked")
                                 viewModel.onSaveClick()
                             },
                             content = { Text("Done") },

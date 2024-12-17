@@ -34,9 +34,18 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.sqldelight.android.driver)
+
+            // For dependency injection
+            implementation(libs.koin.android)
+
+            // For encryption
+            implementation(libs.cryptography.provider.jdk)
         }
         appleMain.dependencies {
             implementation(libs.sqldelight.native.driver)
+
+            // For encryption
+            implementation(libs.cryptography.provider.apple)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -53,6 +62,12 @@ kotlin {
 
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines.extensions)
+
+            // Dependency injection
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.compose.viewmodel.navigation)
 
             // Navigator
             implementation(libs.voyager.navigator)
@@ -79,6 +94,15 @@ kotlin {
 
             // For beautiful text animations
             implementation(libs.texty)
+
+            // For working with JSON
+            implementation(libs.kotlinx.serialization.json)
+
+            // For encryption
+            implementation(libs.cryptography.core)
+
+            // For file handling
+            implementation(libs.filekit.compose)
         }
     }
 }

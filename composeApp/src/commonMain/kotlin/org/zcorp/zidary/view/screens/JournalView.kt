@@ -22,7 +22,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.zcorp.zidary.db.JournalEntry
-import org.zcorp.zidary.formatDateTime
+import org.zcorp.zidary.utils.formatDateTime
 import org.zcorp.zidary.view.theme.AppTypography
 
 class JournalView(

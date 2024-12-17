@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,14 +43,12 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
-import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
-import org.zcorp.zidary.formatDateTime
-import org.zcorp.zidary.getTotalDaysInMonth
+import org.zcorp.zidary.utils.formatDateTime
+import org.zcorp.zidary.utils.getTotalDaysInMonth
 import org.zcorp.zidary.view.components.CalendarDay
 import org.zcorp.zidary.view.components.DeleteConfirmationDialog
 import org.zcorp.zidary.view.components.JournalEntryBottomSheet
@@ -59,7 +56,6 @@ import org.zcorp.zidary.view.components.JournalEntryCard
 import org.zcorp.zidary.view.theme.AppTypography
 import org.zcorp.zidary.viewModel.CalendarScreenEvent
 import org.zcorp.zidary.viewModel.CalendarVM
-import org.zcorp.zidary.viewModel.HomeScreenEvent
 import org.zcorp.zidary.viewModel.JournalComposeVM
 
 class Calendar(private val viewModel: CalendarVM, private val journalComposeVM: JournalComposeVM): Screen {

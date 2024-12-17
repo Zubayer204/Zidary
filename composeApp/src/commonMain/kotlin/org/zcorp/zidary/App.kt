@@ -33,6 +33,7 @@ import org.zcorp.zidary.view.theme.AppTheme
 import org.zcorp.zidary.viewModel.CalendarVM
 import org.zcorp.zidary.viewModel.HomeVM
 import org.zcorp.zidary.viewModel.JournalComposeVM
+import org.zcorp.zidary.viewModel.SyncVM
 
 @Composable
 @Preview
@@ -50,7 +51,7 @@ fun App(db: ZidaryDatabase) {
                         BottomNavigation (backgroundColor = MaterialTheme.colorScheme.surfaceContainer, ) {
                             TabNavigationItem(HomeTab(homeVM, journalComposeVM))
                             TabNavigationItem(CalendarTab(calendarVM, journalComposeVM))
-                            TabNavigationItem(SyncTab)
+                            TabNavigationItem(SyncTab())
                             TabNavigationItem(SettingsTab)
                         }
                         Spacer(modifier = Modifier.fillMaxWidth().height(20.dp).background(MaterialTheme.colorScheme.surfaceContainer))

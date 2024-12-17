@@ -22,7 +22,6 @@ fun DateTimeSelector(
     initialDateTime: Instant,
     onDateTimeSelected: (Instant) -> Unit,
     color: Color,
-    modifier: Modifier = Modifier,
 ) {
     val initialLocalDateTime = initialDateTime.toLocalDateTime(TimeZone.currentSystemDefault())
     var selectedDate by remember(initialLocalDateTime) { mutableStateOf(initialLocalDateTime.date) }

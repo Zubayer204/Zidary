@@ -30,6 +30,7 @@ interface JournalFactoryInterface {
     fun update(id: Long, title: String, body: String, entryTime: Instant): Flow<JournalEntry>
     suspend fun delete(id: Long)
     fun getEntriesByMonth(year: Int, month: Month): Flow<List<JournalEntry>>
+    suspend fun getEntriesByDateRange(startDate: LocalDate, endDate: LocalDate): Flow<List<JournalEntry>>
     fun getEntriesByDate(date: LocalDate): Flow<List<JournalEntry>>
     fun getEntryDatesForMonth(year: Int, month: Month): Flow<List<LocalDate>>
 
@@ -101,6 +102,21 @@ class JournalFactory(database: ZidaryDatabase): JournalFactoryInterface {
             startOfTime = date
                 .atStartOfDayIn(timeZone),
             endOfTime = date
+                .atTime(23, 59, 59, 999)
+                .toInstant(timeZone)
+        ).asFlow().mapToList(Dispatchers.IO)
+    }
+
+    override suspend fun getEntriesByDateRange(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Flow<List<JournalEntry>> {
+        val timeZone = TimeZone.currentSystemDefault()
+
+        return queries.selectEntriesByTimeRange(
+            startOfTime = startDate
+                .atStartOfDayIn(timeZone),
+            endOfTime = endDate
                 .atTime(23, 59, 59, 999)
                 .toInstant(timeZone)
         ).asFlow().mapToList(Dispatchers.IO)

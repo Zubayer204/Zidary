@@ -37,7 +37,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.zcorp.zidary.formatDateTime
+import org.zcorp.zidary.utils.formatDateTime
 import org.zcorp.zidary.view.components.DeleteConfirmationDialog
 import org.zcorp.zidary.view.components.GlowingFAB
 import org.zcorp.zidary.view.components.JournalEntryBottomSheet
