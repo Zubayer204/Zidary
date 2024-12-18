@@ -35,14 +35,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import io.github.vinceglb.filekit.compose.rememberFileSaverLauncher
+import org.koin.compose.koinInject
 import org.zcorp.zidary.view.components.DateRangePickerDialogue
 import org.zcorp.zidary.viewModel.SyncScreenEvent
 import org.zcorp.zidary.viewModel.SyncVM
 
-class Sync(private val viewModel: SyncVM): Screen {
+object Sync: Screen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
+        val viewModel = koinInject<SyncVM>()
         val state by viewModel.state.collectAsState()
         var isDateRangePickerVisible by remember { mutableStateOf(false) }
         var showPassphraseInfo by remember { mutableStateOf(false) }

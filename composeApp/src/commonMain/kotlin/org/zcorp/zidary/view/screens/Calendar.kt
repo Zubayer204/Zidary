@@ -47,6 +47,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
+import org.koin.compose.koinInject
 import org.zcorp.zidary.utils.formatDateTime
 import org.zcorp.zidary.utils.getTotalDaysInMonth
 import org.zcorp.zidary.view.components.CalendarDay
@@ -58,10 +59,13 @@ import org.zcorp.zidary.viewModel.CalendarScreenEvent
 import org.zcorp.zidary.viewModel.CalendarVM
 import org.zcorp.zidary.viewModel.JournalComposeVM
 
-class Calendar(private val viewModel: CalendarVM, private val journalComposeVM: JournalComposeVM): Screen {
+class Calendar: Screen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
+        val viewModel = koinInject<CalendarVM>()
+        val journalComposeVM = koinInject<JournalComposeVM>()
+
         val typography = AppTypography()
         val navigator = LocalNavigator.currentOrThrow
 

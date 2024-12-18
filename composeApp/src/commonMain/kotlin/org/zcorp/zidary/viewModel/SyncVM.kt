@@ -6,14 +6,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.zcorp.zidary.db.JournalEntry
 import org.zcorp.zidary.model.data.ExportData
 import org.zcorp.zidary.model.data.ExportedEntry
 import org.zcorp.zidary.model.data.JournalFactory

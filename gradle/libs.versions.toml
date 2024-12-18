@@ -27,7 +27,7 @@ voyager = "1.1.0-beta03"
 uiAndroid = "1.7.5"
 sqlDelight = "2.0.2"
 startupRuntime = "1.2.0"
-kotlinx-serialization = "1.8.0-RC"
+kotlinx-serialization = "1.7.3"
 cryptography = "0.4.0"
 
 [libraries]

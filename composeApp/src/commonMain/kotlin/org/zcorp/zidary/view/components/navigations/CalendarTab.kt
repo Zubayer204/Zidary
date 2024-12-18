@@ -9,11 +9,12 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import cafe.adriel.voyager.transitions.SlideTransition
+import org.koin.compose.koinInject
 import org.zcorp.zidary.view.screens.Calendar
 import org.zcorp.zidary.viewModel.CalendarVM
 import org.zcorp.zidary.viewModel.JournalComposeVM
 
-class CalendarTab(private val calendarVM: CalendarVM, private val journalComposeVM: JournalComposeVM): Tab {
+object CalendarTab: Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -31,7 +32,8 @@ class CalendarTab(private val calendarVM: CalendarVM, private val journalCompose
 
     @Composable
     override fun Content() {
-        Navigator(screen = Calendar(viewModel = calendarVM, journalComposeVM = journalComposeVM)) {navigator: Navigator ->
+
+        Navigator(screen = Calendar()) {navigator: Navigator ->
             SlideTransition(navigator)
         }
     }

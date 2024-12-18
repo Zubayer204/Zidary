@@ -37,21 +37,17 @@ import org.zcorp.zidary.viewModel.SyncVM
 
 @Composable
 @Preview
-fun App(db: ZidaryDatabase) {
-    val journalFactory = JournalFactory(db)
-    val journalComposeVM = remember { JournalComposeVM(journalFactory) }
-    val homeVM = remember { HomeVM(journalFactory) }
-    val calendarVM = remember { CalendarVM(journalFactory) }
-    TabNavigator(HomeTab(homeVM, journalComposeVM)) {
+fun App() {
+    TabNavigator(HomeTab) {
         AppTheme (darkTheme = true) {
             Scaffold (
                 modifier = Modifier.fillMaxSize(),
                 bottomBar = {
                     Column {
                         BottomNavigation (backgroundColor = MaterialTheme.colorScheme.surfaceContainer, ) {
-                            TabNavigationItem(HomeTab(homeVM, journalComposeVM))
-                            TabNavigationItem(CalendarTab(calendarVM, journalComposeVM))
-                            TabNavigationItem(SyncTab())
+                            TabNavigationItem(HomeTab)
+                            TabNavigationItem(CalendarTab)
+                            TabNavigationItem(SyncTab)
                             TabNavigationItem(SettingsTab)
                         }
                         Spacer(modifier = Modifier.fillMaxWidth().height(20.dp).background(MaterialTheme.colorScheme.surfaceContainer))

@@ -37,6 +37,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.koin.compose.koinInject
 import org.zcorp.zidary.utils.formatDateTime
 import org.zcorp.zidary.view.components.DeleteConfirmationDialog
 import org.zcorp.zidary.view.components.GlowingFAB
@@ -49,10 +50,13 @@ import org.zcorp.zidary.viewModel.HomeScreenEvent
 import org.zcorp.zidary.viewModel.HomeVM
 import org.zcorp.zidary.viewModel.JournalComposeVM
 
-class Home(private val viewModel: HomeVM, private val journalComposeVM: JournalComposeVM): Screen {
+object Home: Screen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
+        val viewModel = koinInject<HomeVM>()
+        val journalComposeVM = koinInject<JournalComposeVM>()
+
         val navigator = LocalNavigator.currentOrThrow
         val state by viewModel.state.collectAsState()
 

@@ -6,8 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.vinceglb.filekit.core.FileKit
-import org.zcorp.zidary.model.database.DriverFactory
-import org.zcorp.zidary.model.database.createDatabase
 
 
 class MainActivity : ComponentActivity() {
@@ -16,10 +14,8 @@ class MainActivity : ComponentActivity() {
 
         FileKit.init(this)
 
-        val db = createDatabase(DriverFactory(this))
-
         setContent {
-            App(db)
+            App()
         }
     }
 }
@@ -27,6 +23,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    val db = createDatabase(DriverFactory(MockContext()))
-    App(db)
+    App()
 }
