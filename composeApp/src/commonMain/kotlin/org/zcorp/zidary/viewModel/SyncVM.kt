@@ -1,6 +1,7 @@
 package org.zcorp.zidary.viewModel
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import io.github.vinceglb.filekit.core.PlatformFile
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -97,6 +98,12 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
             }
         }
     }
+
+    fun dataExported(file: PlatformFile) {
+        viewModelScope.launch {
+            _events.send(SyncScreenEvent.ExportDone(file))
+        }
+    }
 }
 
 data class SyncScreenState(
@@ -123,4 +130,5 @@ sealed class SyncScreenEvent {
             return data.contentHashCode()
         }
     }
+    data class ExportDone(val file: PlatformFile): SyncScreenEvent()
 }

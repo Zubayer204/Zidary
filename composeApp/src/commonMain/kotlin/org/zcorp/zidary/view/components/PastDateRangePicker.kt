@@ -1,5 +1,6 @@
 package org.zcorp.zidary.view.components
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
@@ -20,8 +21,6 @@ import kotlinx.datetime.Clock
 fun DateRangePickerDialogue(
     onDismiss: () -> Unit,
     onConfirm: (Long?, Long?) -> Unit,
-    modifier: Modifier = Modifier
-        .padding(16.dp)
 ) {
     val dateRangePickerState = rememberDateRangePickerState(
         selectableDates = PastSelectableDates
@@ -33,18 +32,21 @@ fun DateRangePickerDialogue(
                 onClick = { onConfirm(
                     dateRangePickerState.selectedStartDateMillis,
                     dateRangePickerState.selectedEndDateMillis
-                ) }
+                ) },
+                modifier = Modifier.padding(horizontal = 8.dp)
             ) {
                 Text("OK")
             }
         },
         dismissButton = {
             TextButton(
-                onClick = onDismiss
+                onClick = onDismiss,
+                modifier = Modifier.padding(horizontal = 8.dp)
             ) {
                 Text("Cancel")
             }
         },
+        modifier = Modifier.fillMaxSize()
     ) {
         DateRangePicker(
             title = {
@@ -64,7 +66,7 @@ fun DateRangePickerDialogue(
             },
             state = dateRangePickerState,
             showModeToggle = false,
-            modifier = modifier
+            modifier = Modifier.padding(16.dp)
         )
     }
 }
