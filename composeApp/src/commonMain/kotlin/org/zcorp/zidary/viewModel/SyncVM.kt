@@ -39,15 +39,23 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
         ) }
     }
 
-    fun updatePassphrase(passphrase: String) {
-        _state.update { it.copy( passphrase = passphrase, enabledPassphrase = true ) }
+    fun updateEncryptionPassphrase(passphrase: String) {
+        _state.update { it.copy( encryptionPassphrase = passphrase, enabledEncryptionPassphrase = true ) }
+    }
+
+    fun updateDecryptionPassphrase(passphrase: String) {
+        _state.update { it.copy( decryptionPassphrase = passphrase, enabledDecryptionPassphrase = true ) }
+    }
+
+    fun pickFileForImport(file: PlatformFile) {
+        _state.update { it.copy(pickedFileForImport = file) }
     }
 
     fun exportData() {
         viewModelScope.launch {
             try {
                 println("Exporting data")
-                if (state.value.passphrase.length < REQUIRED_PASSPHRASE_LENGTH) {
+                if (state.value.encryptionPassphrase.length < REQUIRED_PASSPHRASE_LENGTH) {
                     _events.send(SyncScreenEvent.ShowError("Passphrase must be at least 6 characters long"))
                     return@launch
                 }
@@ -71,6 +79,7 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
                 val exportData = ExportData(
                     entries = exportableEntries.map { entry ->
                         ExportedEntry(
+                            id = entry.id,
                             title = entry.title,
                             body = entry.body,
                             entryTime = entry.entry_time,
@@ -83,7 +92,7 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
                 println("Data collected from DB")
 
                 val jsonString = Json.encodeToString(exportData)
-                val encrypted = Encryption.encrypt(jsonString.encodeToByteArray(), state.value.passphrase)
+                val encrypted = Encryption.encrypt(jsonString.encodeToByteArray(), state.value.encryptionPassphrase)
 
                 println("Encrypted data: $encrypted")
 
@@ -99,9 +108,72 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
         }
     }
 
+
     fun dataExported(file: PlatformFile) {
         viewModelScope.launch {
             _events.send(SyncScreenEvent.ExportDone(file))
+        }
+    }
+
+    fun importData() {
+        if (state.value.pickedFileForImport == null) {
+            viewModelScope.launch {
+                _events.send(SyncScreenEvent.ShowError("No file selected for import"))
+            }
+            return
+        } else if (state.value.decryptionPassphrase.length < REQUIRED_PASSPHRASE_LENGTH) {
+            viewModelScope.launch {
+                _events.send(SyncScreenEvent.ShowError("Passphrase must be at least 6 characters long"))
+            }
+            return
+        }
+
+        println("Importing data from file: ${state.value.pickedFileForImport!!.name}")
+
+        viewModelScope.launch {
+            Encryption.decrypt(state.value.pickedFileForImport!!.readBytes(), state.value.decryptionPassphrase).let { result ->
+                when (result) {
+                    is CryptoResult.Error -> {
+                        if (result.exception.message?.contains("BAD_DECRYPT") == true) {
+                            _events.send(SyncScreenEvent.ShowError("Incorrect passphrase"))
+                        } else {
+                            _events.send(SyncScreenEvent.ShowError("Error decrypting file: ${result.exception.message ?: "Unknown error"}"))
+                        }
+                    }
+                    is CryptoResult.Success -> {
+                        val decryptedData = result.data.decodeToString()
+                        println("Decrypted data: $decryptedData")
+                        try {
+                            val importData = Json.decodeFromString(ExportData.serializer(), decryptedData)
+                            println("Imported data: $importData")
+                            for (entry in importData.entries) {
+                                journalFactory.upsert(
+                                    entry.id,
+                                    entry.title,
+                                    entry.body,
+                                    entry.entryTime,
+                                    entry.createdAt,
+                                    entry.modifiedAt
+                                )
+                            }
+                            _events.send(SyncScreenEvent.ImportDone(importData.entries.size))
+                        } catch (e: Exception) {
+                            _events.send(SyncScreenEvent.ShowError("Error parsing imported data: ${e.message ?: "Unknown error"}"))
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun startImport() {
+        viewModelScope.launch {
+            _events.send(SyncScreenEvent.ImportStart)
+        }
+    }
+    fun errorLoadingFile() {
+        viewModelScope.launch {
+            _events.send(SyncScreenEvent.ShowError("Error loading file"))
         }
     }
 }
@@ -109,8 +181,11 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
 data class SyncScreenState(
     val startDate: LocalDate? = null,
     val endDate: LocalDate? = null,
-    val passphrase: String = "",
-    val enabledPassphrase: Boolean = false,
+    val encryptionPassphrase: String = "",
+    val enabledEncryptionPassphrase: Boolean = false,
+    val decryptionPassphrase: String = "",
+    val enabledDecryptionPassphrase: Boolean = false,
+    val pickedFileForImport: PlatformFile? = null,
     val isExporting: Boolean = false
 )
 
@@ -131,4 +206,6 @@ sealed class SyncScreenEvent {
         }
     }
     data class ExportDone(val file: PlatformFile): SyncScreenEvent()
+    data object ImportStart: SyncScreenEvent()
+    data class ImportDone(val entriesImported: Int): SyncScreenEvent()
 }

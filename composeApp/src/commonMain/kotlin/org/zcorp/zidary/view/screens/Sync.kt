@@ -18,15 +18,14 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,14 +39,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.compose.rememberFileSaverLauncher
+import io.github.vinceglb.filekit.core.PickerType
 import org.koin.compose.koinInject
 import org.zcorp.zidary.view.components.DateRangePickerDialogue
 import org.zcorp.zidary.viewModel.SyncScreenEvent
 import org.zcorp.zidary.viewModel.SyncVM
 
 object Sync: Screen {
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val viewModel = koinInject<SyncVM>()
@@ -61,6 +61,12 @@ object Sync: Screen {
                 viewModel.dataExported(file)
             }
             println("Saved file: $file")
+        }
+        val filePickerLauncher = rememberFilePickerLauncher(type = PickerType.File(listOf("zidary"))) { file ->
+            if (file != null) {
+                viewModel.pickFileForImport(file)
+            }
+            println("Picked file: $file")
         }
 
         LaunchedEffect(Unit) {
@@ -78,6 +84,12 @@ object Sync: Screen {
                     }
                     is SyncScreenEvent.ExportDone -> {
                         snackbarHostState.showSnackbar("File saved to ${event.file.name}")
+                    }
+                    is SyncScreenEvent.ImportStart -> {
+                        filePickerLauncher.launch()
+                    }
+                    is SyncScreenEvent.ImportDone -> {
+                        snackbarHostState.showSnackbar("Imported ${event.entriesImported} entries")
                     }
                 }
             }
@@ -176,13 +188,14 @@ object Sync: Screen {
                                 )
 
                                 OutlinedTextField(
-                                    value = state.passphrase,
-                                    onValueChange = { viewModel.updatePassphrase(it) },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    value = state.encryptionPassphrase,
+                                    onValueChange = { viewModel.updateEncryptionPassphrase(it) },
                                     label = { Text("Enter passphrase") },
-                                    isError = state.passphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledPassphrase
+                                    isError = state.encryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledEncryptionPassphrase
                                 )
 
-                                if (state.passphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledPassphrase) {
+                                if (state.encryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledEncryptionPassphrase) {
                                     Text(
                                         text = "Passphrase must be at least ${viewModel.REQUIRED_PASSPHRASE_LENGTH} characters",
                                         color = MaterialTheme.colorScheme.error,
@@ -204,7 +217,7 @@ object Sync: Screen {
                                 focusManager.clearFocus()
                                 viewModel.exportData()
                             },
-                            enabled = state.passphrase.length >= viewModel.REQUIRED_PASSPHRASE_LENGTH,
+                            enabled = state.encryptionPassphrase.length >= viewModel.REQUIRED_PASSPHRASE_LENGTH,
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text("Export Data")
@@ -227,7 +240,54 @@ object Sync: Screen {
                             style = MaterialTheme.typography.headlineMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
+
+                        Box {
+                            Column {
+                                Text(
+                                    text = "Decryption Passphrase",
+                                    style = MaterialTheme.typography.titleLarge
+                                )
+
+                                OutlinedTextField(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    value = state.decryptionPassphrase,
+                                    onValueChange = { viewModel.updateDecryptionPassphrase(it) },
+                                    label = { Text("Enter passphrase") },
+                                    isError = state.decryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledDecryptionPassphrase
+                                )
+
+                                if (state.decryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledDecryptionPassphrase) {
+                                    Text(
+                                        text = "Passphrase must be at least ${viewModel.REQUIRED_PASSPHRASE_LENGTH} characters",
+                                        color = MaterialTheme.colorScheme.error,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                            }
+                        }
+
+                        // Choose File Button
+                        OutlinedButton(
+                            onClick = {
+                                focusManager.clearFocus()
+                                viewModel.startImport()
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(if (state.pickedFileForImport != null) state.pickedFileForImport!!.name else "Choose File")
+                        }
+
+                        Button(
+                            onClick = {
+                                focusManager.clearFocus()
+                                viewModel.importData()
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Import Data")
+                        }
                     }
+
                 }
 
             }

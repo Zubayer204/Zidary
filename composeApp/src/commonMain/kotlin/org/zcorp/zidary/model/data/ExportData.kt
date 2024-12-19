@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ExportedEntry(
+    val id: Long,
     val title: String,
     val body: String,
     val entryTime: Instant,

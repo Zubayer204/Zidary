@@ -27,6 +27,10 @@ SELECT * FROM JournalEntry WHERE id = ?;
 updateJournalEntry:
 UPDATE JournalEntry SET title = ?, body = ?, entry_time = ?, modified_at = ? WHERE id = ?;
 
+upsertJournalEntry:
+INSERT OR REPLACE INTO JournalEntry (id, title, body, entry_time, created_at, modified_at)
+VALUES (?, ?, ?, ?, ?, ?);
+
 deleteJournalEntryById:
 DELETE FROM JournalEntry WHERE id = ?;
 

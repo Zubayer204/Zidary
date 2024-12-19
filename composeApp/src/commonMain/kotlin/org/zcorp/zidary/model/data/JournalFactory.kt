@@ -28,6 +28,7 @@ interface JournalFactoryInterface {
     fun getById(id: Long): Flow<JournalEntry>
     suspend fun insert(title: String, body: String, entryTime: Instant)
     fun update(id: Long, title: String, body: String, entryTime: Instant): Flow<JournalEntry>
+    suspend fun upsert(id: Long, title: String, body: String, entryTime: Instant, createdAt: Instant, modifiedAt: Instant)
     suspend fun delete(id: Long)
     fun getEntriesByMonth(year: Int, month: Month): Flow<List<JournalEntry>>
     suspend fun getEntriesByDateRange(startDate: LocalDate, endDate: LocalDate): Flow<List<JournalEntry>>
@@ -77,6 +78,19 @@ class JournalFactory(database: ZidaryDatabase): JournalFactoryInterface {
             id
         )
         getById(id)
+    }
+
+    override suspend fun upsert(id: Long, title: String, body: String, entryTime: Instant, createdAt: Instant, modifiedAt: Instant) {
+        withContext(Dispatchers.IO) {
+            queries.upsertJournalEntry(
+                id,
+                title,
+                body,
+                entryTime,
+                createdAt,
+                modifiedAt
+            )
+        }
     }
 
     override suspend fun delete(id: Long) {
