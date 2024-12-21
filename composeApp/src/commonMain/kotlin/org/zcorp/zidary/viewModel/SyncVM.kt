@@ -1,5 +1,9 @@
 package org.zcorp.zidary.viewModel
 
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import io.github.vinceglb.filekit.core.PlatformFile
 import kotlinx.coroutines.channels.Channel
@@ -29,6 +33,12 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
 
     private val _events = Channel<SyncScreenEvent>()
     val events = _events.receiveAsFlow()
+
+    // Design elements
+    val passphraseKeyboardOptions = KeyboardOptions(
+        capitalization = KeyboardCapitalization.None,
+        keyboardType = KeyboardType.Password,
+    )
 
     fun updateDateRange(startDate: Long?, endDate: Long?) {
         val currentDate = Clock.System.now().toEpochMilliseconds()
@@ -110,6 +120,10 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
 
 
     fun dataExported(file: PlatformFile) {
+        // Clear the encryption passphrase
+        _state.update {
+            it.copy(encryptionPassphrase = "", enabledEncryptionPassphrase = false, isExporting = false)
+        }
         viewModelScope.launch {
             _events.send(SyncScreenEvent.ExportDone(file))
         }
@@ -155,6 +169,10 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
                                     entry.createdAt,
                                     entry.modifiedAt
                                 )
+                            }
+                            // Clear the picked file and passphrases
+                            _state.update {
+                                it.copy(pickedFileForImport = null, decryptionPassphrase = "", enabledDecryptionPassphrase = false)
                             }
                             _events.send(SyncScreenEvent.ImportDone(importData.entries.size))
                         } catch (e: Exception) {

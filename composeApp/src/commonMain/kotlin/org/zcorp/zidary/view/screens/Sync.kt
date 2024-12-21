@@ -2,6 +2,7 @@ package org.zcorp.zidary.view.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,13 +37,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.compose.rememberFileSaverLauncher
 import io.github.vinceglb.filekit.core.PickerType
 import org.koin.compose.koinInject
+import org.zcorp.zidary.utils.generateDateTimeFileName
 import org.zcorp.zidary.view.components.DateRangePickerDialogue
 import org.zcorp.zidary.viewModel.SyncScreenEvent
 import org.zcorp.zidary.viewModel.SyncVM
@@ -78,7 +82,7 @@ object Sync: Screen {
                     is SyncScreenEvent.ExportReady -> {
                         fileSaverLauncher.launch(
                             bytes = event.data,
-                            baseName = "journal_export",
+                            baseName = generateDateTimeFileName("journal_export"),
                             extension = "zidary"
                         )
                     }
@@ -128,7 +132,11 @@ object Sync: Screen {
                 }
             }
 
-        } }) {
+        } }, modifier = Modifier.pointerInput(Unit) {
+            detectTapGestures(onTap = {
+                focusManager.clearFocus()
+            })
+        }) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -192,7 +200,9 @@ object Sync: Screen {
                                     value = state.encryptionPassphrase,
                                     onValueChange = { viewModel.updateEncryptionPassphrase(it) },
                                     label = { Text("Enter passphrase") },
-                                    isError = state.encryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledEncryptionPassphrase
+                                    isError = state.encryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledEncryptionPassphrase,
+                                    keyboardOptions = viewModel.passphraseKeyboardOptions,
+                                    visualTransformation = PasswordVisualTransformation(),
                                 )
 
                                 if (state.encryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledEncryptionPassphrase) {
@@ -253,7 +263,9 @@ object Sync: Screen {
                                     value = state.decryptionPassphrase,
                                     onValueChange = { viewModel.updateDecryptionPassphrase(it) },
                                     label = { Text("Enter passphrase") },
-                                    isError = state.decryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledDecryptionPassphrase
+                                    isError = state.decryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledDecryptionPassphrase,
+                                    keyboardOptions = viewModel.passphraseKeyboardOptions,
+                                    visualTransformation = PasswordVisualTransformation()
                                 )
 
                                 if (state.decryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledDecryptionPassphrase) {
