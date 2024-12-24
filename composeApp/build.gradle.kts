@@ -40,6 +40,9 @@ kotlin {
 
             // For encryption
             implementation(libs.cryptography.provider.jdk)
+
+            // For bio-metric authentication
+            implementation(libs.androidx.biometric)
         }
         appleMain.dependencies {
             implementation(libs.sqldelight.native.driver)

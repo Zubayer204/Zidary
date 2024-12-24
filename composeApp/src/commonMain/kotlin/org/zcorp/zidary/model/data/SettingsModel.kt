@@ -12,8 +12,7 @@ data class AppearanceSettings(
 
 @Serializable
 data class SecuritySettings(
-    val useAppLock: Boolean = false,
-    val lockType: LockType = LockType.NONE,
+    val useBiometricLock: Boolean = false,
     val hideEntryPreviews: Boolean = false,
 )
 
@@ -27,10 +26,4 @@ enum class AvailableFontFamily {
     FUNNEL_DISPLAY,
     GEMUNU_LIBRE,
     SPACE_MONO,
-}
-
-enum class LockType {
-    NONE,
-    PIN,
-    BIOMETRIC
 }

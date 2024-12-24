@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.zcorp.zidary.model.data.AppearanceSettings
 import org.zcorp.zidary.model.data.AvailableFontFamily
-import org.zcorp.zidary.model.data.LockType
 import org.zcorp.zidary.model.data.SecuritySettings
 import org.zcorp.zidary.model.data.SettingsRepository
 import org.zcorp.zidary.model.data.ThemeMode
@@ -39,7 +38,6 @@ class SettingsManager(
     fun getCurrentFontFamily(): AvailableFontFamily = appearanceSettings.value.fontFamily
     fun getAccentColor(): Long? = appearanceSettings.value.accentColor
 
-    fun isAppLockEnabled(): Boolean = securitySettings.value.useAppLock
-    fun getLockType(): LockType = securitySettings.value.lockType
+    fun isBiometricLockEnabled(): Boolean = securitySettings.value.useBiometricLock
     fun shouldHideEntryPreviews(): Boolean = securitySettings.value.hideEntryPreviews
 }

@@ -1,35 +1,24 @@
 package org.zcorp.zidary.view.components.settings
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.runtime.Composable
-import org.zcorp.zidary.model.data.LockType
 import org.zcorp.zidary.model.data.SecuritySettings
 
 @Composable
 fun SecuritySection(
     settings: SecuritySettings,
     onAppLockChanged: (Boolean) -> Unit,
-    onLockTypeChanged: (LockType) -> Unit,
     onHidePreviewsChanged: (Boolean) -> Unit
 ) {
     SettingsSection(title = "Privacy & Security") {
         // App Lock Toggle
-        SwitchPreference(
-            title = "App Lock",
-            subtitle = "Require authentication to open app",
-            checked = settings.useAppLock,
+        SettingsClickableElementWithToggle(
+            name = "Biometric Lock",
+            icon = Icons.Default.Fingerprint,
+            checked = settings.useBiometricLock,
             onCheckedChange = onAppLockChanged
         )
-
-        // Lock Type Selection (only shown if app lock is enabled)
-        if (settings.useAppLock) {
-            SettingsDropdown(
-                title = "Lock Type",
-                selectedValue = settings.lockType,
-                values = LockType.entries.filter { it != LockType.NONE },
-                onValueSelected = onLockTypeChanged,
-                valueToString = { it.name.lowercase().capitalize() }
-            )
-        }
 
         // Hide Entry Previews
         SwitchPreference(

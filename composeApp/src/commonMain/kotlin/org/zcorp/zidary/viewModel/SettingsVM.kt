@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.zcorp.zidary.model.data.AppearanceSettings
 import org.zcorp.zidary.model.data.AvailableFontFamily
-import org.zcorp.zidary.model.data.LockType
 import org.zcorp.zidary.model.data.SecuritySettings
 import org.zcorp.zidary.model.data.ThemeMode
 
@@ -88,27 +87,13 @@ class SettingsVM(
         viewModelScope.launch {
             try {
                 val updatedSettings = state.value.securitySettings.copy(
-                    useAppLock = enabled,
-                    lockType = if (enabled) LockType.PIN else LockType.NONE
+                    useBiometricLock = enabled,
                 )
                 settingsManager.updateSecuritySettings(updatedSettings)
                 _state.update { it.copy(securitySettings = updatedSettings) }
                 _events.send(SettingsEvent.SettingsUpdated)
             } catch (e: Exception) {
                 _events.send(SettingsEvent.ShowError("Failed to update app lock: ${e.message}"))
-            }
-        }
-    }
-
-    fun updateLockType(lockType: LockType) {
-        viewModelScope.launch {
-            try {
-                val updatedSettings = state.value.securitySettings.copy(lockType = lockType)
-                settingsManager.updateSecuritySettings(updatedSettings)
-                _state.update { it.copy(securitySettings = updatedSettings) }
-                _events.send(SettingsEvent.SettingsUpdated)
-            } catch (e: Exception) {
-                _events.send(SettingsEvent.ShowError("Failed to update lock type: ${e.message}"))
             }
         }
     }

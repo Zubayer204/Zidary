@@ -81,7 +81,6 @@ class Settings: Screen {
                         SecuritySection(
                             settings = state.securitySettings,
                             onAppLockChanged = viewModel::updateAppLock,
-                            onLockTypeChanged = viewModel::updateLockType,
                             onHidePreviewsChanged = viewModel::updateHideEntryPreviews
                         )
                     }
