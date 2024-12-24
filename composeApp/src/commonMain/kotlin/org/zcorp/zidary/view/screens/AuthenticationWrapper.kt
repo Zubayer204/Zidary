@@ -27,8 +27,9 @@ fun AuthenticationWrapper(
     val authManager = AuthManager(settingsManager, platformContext)
     var isAuthenticated by remember { mutableStateOf(false) }
     var showAuthDialog by remember { mutableStateOf(true) }
+    var authAttempt by remember { mutableStateOf(0) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(authAttempt) {
         if (showAuthDialog) {
             isAuthenticated = authManager.authenticateIfRequired()
             showAuthDialog = false
@@ -46,7 +47,10 @@ fun AuthenticationWrapper(
         ) {
             Text("Authentication required")
             Button(
-                onClick = { showAuthDialog = true }
+                onClick = {
+                    showAuthDialog = true
+                    authAttempt++
+                }
             ) {
                 Text("Try Again")
             }
