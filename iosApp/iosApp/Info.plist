@@ -46,5 +46,6 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-</dict>
+    <key>NSFaceIDUsageDescription</key>
+    <string>$(PRODUCT_NAME) Authentication with TouchId or FaceID</string></dict>
 </plist>
