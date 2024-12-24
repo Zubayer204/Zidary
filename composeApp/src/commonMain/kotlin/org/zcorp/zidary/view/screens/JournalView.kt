@@ -23,7 +23,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.zcorp.zidary.db.JournalEntry
 import org.zcorp.zidary.utils.formatDateTime
-import org.zcorp.zidary.view.theme.AppTypography
 
 class JournalView(
     private val entry: JournalEntry,
@@ -32,8 +31,6 @@ class JournalView(
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        val typography = AppTypography()
-
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -59,7 +56,7 @@ class JournalView(
                 // Entry Time
                 Text(
                     text = formatDateTime(entry.entry_time.toLocalDateTime(TimeZone.currentSystemDefault())),
-                    style = typography.labelLarge,
+                    style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
@@ -71,14 +68,14 @@ class JournalView(
                 // Title
                 Text(
                     text = entry.title,
-                    style = typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
                 // Body
                 Text(
                     text = entry.body,
-                    style = typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }

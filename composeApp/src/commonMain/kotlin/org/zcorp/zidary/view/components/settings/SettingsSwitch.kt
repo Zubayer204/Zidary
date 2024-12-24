@@ -41,8 +41,6 @@ fun SettingsClickableElementWithToggle(
             Text(
                 text = name,
                 style = MaterialTheme.typography.titleMedium,
-//                modifier = Modifier.padding(16.dp).weight(1f),
-//                overflow = TextOverflow.Ellipsis,
             )
             if (subtitle != null) {
                 Text(
@@ -52,7 +50,7 @@ fun SettingsClickableElementWithToggle(
                 )
             }
         }
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Switch(modifier = Modifier.padding(start = 32.dp), checked = checked, onCheckedChange = onCheckedChange)
     }
     Spacer(modifier = Modifier.padding(top = 12.dp))
 }

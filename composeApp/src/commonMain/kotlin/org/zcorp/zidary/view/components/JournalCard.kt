@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,7 +27,6 @@ fun JournalEntryCard(
     title: String,
     content: String,
     datetime: String,
-    typography: Typography,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -56,7 +54,7 @@ fun JournalEntryCard(
         ) {
             Text(
                 text = title,
-                style = typography.headlineMedium,
+                style = MaterialTheme.typography.headlineMedium,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onSurface
@@ -66,7 +64,7 @@ fun JournalEntryCard(
 
             Text(
                 text = content,
-                style = typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 maxLines = 6,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.fillMaxWidth(),
@@ -83,7 +81,7 @@ fun JournalEntryCard(
             ) {
                 Text(
                     text = datetime,
-                    style = typography.labelMedium,
+                    style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }

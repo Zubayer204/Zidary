@@ -45,7 +45,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import org.zcorp.zidary.view.components.DateTimeSelector
-import org.zcorp.zidary.view.theme.AppTypography
 import org.zcorp.zidary.viewModel.JournalComposeEvent
 import org.zcorp.zidary.viewModel.JournalComposeVM
 
@@ -55,8 +54,6 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        val typography = AppTypography()
-
         val state by viewModel.state.collectAsState()
         val snackBarHostState = remember { SnackbarHostState() }
         val bodyFocusRequester = remember { FocusRequester() }
@@ -100,7 +97,6 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     DateTimeSelector(
-                        typography,
                         initialDateTime = state.entryTime,
                         onDateTimeSelected = viewModel::onEntryTimeChanged,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -143,7 +139,7 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
                 )
                 Text(
                     "Title",
-                    style = typography.titleLarge,
+                    style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 OutlinedTextField(
@@ -172,7 +168,7 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
                 )
                 Text(
                     "Body",
-                    style = typography.titleLarge,
+                    style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 OutlinedTextField(

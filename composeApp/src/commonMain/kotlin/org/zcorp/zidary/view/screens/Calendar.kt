@@ -54,7 +54,6 @@ import org.zcorp.zidary.view.components.CalendarDay
 import org.zcorp.zidary.view.components.DeleteConfirmationDialog
 import org.zcorp.zidary.view.components.JournalEntryBottomSheet
 import org.zcorp.zidary.view.components.JournalEntryCard
-import org.zcorp.zidary.view.theme.AppTypography
 import org.zcorp.zidary.viewModel.CalendarScreenEvent
 import org.zcorp.zidary.viewModel.CalendarVM
 import org.zcorp.zidary.viewModel.JournalComposeVM
@@ -66,7 +65,6 @@ class Calendar: Screen {
         val viewModel = koinInject<CalendarVM>()
         val journalComposeVM = koinInject<JournalComposeVM>()
 
-        val typography = AppTypography()
         val navigator = LocalNavigator.currentOrThrow
 
         // State for selected date and month
@@ -83,12 +81,11 @@ class Calendar: Screen {
                     is CalendarScreenEvent.NavigateToEdit -> {
                         navigator.push(JournalEdit(
                             event.id,
-                            journalComposeVM,
-                            { navigator.pop() }
-                        ))
+                            journalComposeVM
+                        ) { navigator.pop() })
                     }
                     is CalendarScreenEvent.NavigateToView -> {
-                        navigator.push(JournalView(event.entry, { navigator.pop() }))
+                        navigator.push(JournalView(event.entry) { navigator.pop() })
                     }
                     is CalendarScreenEvent.EntryDeleted -> {
                         snackbarHostState.showSnackbar("Entry Deleted")
@@ -126,7 +123,7 @@ class Calendar: Screen {
 
                     Text(
                         text = "${state.currentMonth.name} ${state.currentYear}",
-                        style = typography.titleLarge,
+                        style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.clickable {
                             viewModel.onDatePickerStatusChange(true)
@@ -158,7 +155,7 @@ class Calendar: Screen {
                         Text(
                             text = dayName,
                             modifier = Modifier.weight(1f),
-                            style = typography.labelMedium,
+                            style = MaterialTheme.typography.labelMedium,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -214,7 +211,6 @@ class Calendar: Screen {
                     onClick = { viewModel.onViewEntryClick(entry) },
                     onLongClick = { viewModel.onEntryLongPress(entry) },
                     datetime = formatDateTime(entry.entry_time.toLocalDateTime(TimeZone.currentSystemDefault())),
-                    typography = typography
                 )
             }
         }

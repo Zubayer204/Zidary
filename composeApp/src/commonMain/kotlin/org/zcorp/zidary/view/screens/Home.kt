@@ -44,7 +44,6 @@ import org.zcorp.zidary.view.components.GlowingFAB
 import org.zcorp.zidary.view.components.JournalEntryBottomSheet
 import org.zcorp.zidary.view.components.JournalEntryCard
 import org.zcorp.zidary.view.components.TextEntryAnimation
-import org.zcorp.zidary.view.theme.AppTypography
 import org.zcorp.zidary.view.theme.GreatVibes
 import org.zcorp.zidary.viewModel.HomeScreenEvent
 import org.zcorp.zidary.viewModel.HomeVM
@@ -65,7 +64,6 @@ object Home: Screen {
         var showDeleteConfirmation by remember { mutableStateOf(false) }
         var entryToDelete by remember { mutableStateOf(-1L) }
 
-        val typography = AppTypography()
         val zoneId = TimeZone.currentSystemDefault()
 
         LaunchedEffect(Unit) {
@@ -74,12 +72,11 @@ object Home: Screen {
                     is HomeScreenEvent.NavigateToEdit -> {
                         navigator.push(JournalEdit(
                             event.id,
-                            journalComposeVM,
-                            { navigator.pop() }
-                        ))
+                            journalComposeVM
+                        ) { navigator.pop() })
                     }
                     is HomeScreenEvent.NavigateToView -> {
-                        navigator.push(JournalView(event.entry, { navigator.pop() }))
+                        navigator.push(JournalView(event.entry) { navigator.pop() })
                     }
                     is HomeScreenEvent.EntryDeleted -> {
                         snackbarHostState.showSnackbar("Entry Deleted")
@@ -133,7 +130,6 @@ object Home: Screen {
                         entry.title,
                         entry.body,
                         formatDateTime(entry.entry_time.toLocalDateTime(zoneId)),
-                        typography,
                         onClick = { viewModel.onViewEntryClick(entry) },
                         onLongClick = { viewModel.onEntryLongPress(entry) },
                         modifier = Modifier.animateItem()

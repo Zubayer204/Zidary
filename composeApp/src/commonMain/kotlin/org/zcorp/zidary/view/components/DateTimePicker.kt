@@ -13,12 +13,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.datetime.*
-import org.zcorp.zidary.view.theme.AppTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateTimeSelector(
-    typography: Typography = AppTypography(),
     initialDateTime: Instant,
     onDateTimeSelected: (Instant) -> Unit,
     color: Color,
@@ -38,7 +36,7 @@ fun DateTimeSelector(
         Text(
             selectedDate.toString(),
             color = color,
-            style = typography.titleMedium,
+            style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.clickable {
                 showDatePicker = true
             }
@@ -48,7 +46,7 @@ fun DateTimeSelector(
         Text(
             selectedTime.formatTime(),
             color = color,
-            style = typography.titleMedium,
+            style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.clickable {
                 showTimePicker = true
             }
