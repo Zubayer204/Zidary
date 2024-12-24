@@ -27,6 +27,7 @@ fun JournalEntryCard(
     title: String,
     content: String,
     datetime: String,
+    showPreview: Boolean = true,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -62,14 +63,16 @@ fun JournalEntryCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Text(
-                text = content,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 6,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            if (showPreview) {
+                Text(
+                    text = content,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 6,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
 
             Spacer(modifier = Modifier.height(6.dp))
 

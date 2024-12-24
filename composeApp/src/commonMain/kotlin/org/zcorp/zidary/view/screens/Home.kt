@@ -48,6 +48,7 @@ import org.zcorp.zidary.view.theme.GreatVibes
 import org.zcorp.zidary.viewModel.HomeScreenEvent
 import org.zcorp.zidary.viewModel.HomeVM
 import org.zcorp.zidary.viewModel.JournalComposeVM
+import org.zcorp.zidary.viewModel.SettingsManager
 
 object Home: Screen {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -55,6 +56,8 @@ object Home: Screen {
     override fun Content() {
         val viewModel = koinInject<HomeVM>()
         val journalComposeVM = koinInject<JournalComposeVM>()
+        val settingsManager = koinInject<SettingsManager>()
+        val securitySettings by settingsManager.securitySettings.collectAsState()
 
         val navigator = LocalNavigator.currentOrThrow
         val state by viewModel.state.collectAsState()
@@ -130,6 +133,7 @@ object Home: Screen {
                         entry.title,
                         entry.body,
                         formatDateTime(entry.entry_time.toLocalDateTime(zoneId)),
+                        showPreview = !securitySettings.hideEntryPreviews,
                         onClick = { viewModel.onViewEntryClick(entry) },
                         onLongClick = { viewModel.onEntryLongPress(entry) },
                         modifier = Modifier.animateItem()

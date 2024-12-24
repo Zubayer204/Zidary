@@ -57,6 +57,7 @@ import org.zcorp.zidary.view.components.JournalEntryCard
 import org.zcorp.zidary.viewModel.CalendarScreenEvent
 import org.zcorp.zidary.viewModel.CalendarVM
 import org.zcorp.zidary.viewModel.JournalComposeVM
+import org.zcorp.zidary.viewModel.SettingsManager
 
 class Calendar: Screen {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -64,6 +65,8 @@ class Calendar: Screen {
     override fun Content() {
         val viewModel = koinInject<CalendarVM>()
         val journalComposeVM = koinInject<JournalComposeVM>()
+        val settingsManager = koinInject<SettingsManager>()
+        val securitySettings by settingsManager.securitySettings.collectAsState()
 
         val navigator = LocalNavigator.currentOrThrow
 
@@ -208,6 +211,7 @@ class Calendar: Screen {
                 JournalEntryCard(
                     title = entry.title,
                     content = entry.body,
+                    showPreview = !securitySettings.hideEntryPreviews,
                     onClick = { viewModel.onViewEntryClick(entry) },
                     onLongClick = { viewModel.onEntryLongPress(entry) },
                     datetime = formatDateTime(entry.entry_time.toLocalDateTime(TimeZone.currentSystemDefault())),
