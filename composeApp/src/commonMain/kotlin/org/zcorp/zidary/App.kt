@@ -22,39 +22,42 @@ import org.zcorp.zidary.view.components.navigations.HomeTab
 import org.zcorp.zidary.view.components.navigations.SettingsTab
 import org.zcorp.zidary.view.components.navigations.SyncTab
 import org.zcorp.zidary.view.components.navigations.TabNavigationItem
+import org.zcorp.zidary.view.screens.AuthenticationWrapper
 import org.zcorp.zidary.view.theme.AppTheme
 import org.zcorp.zidary.viewModel.SettingsManager
 
 @Composable
 @Preview
 fun App() {
-    TabNavigator(HomeTab) {
-        val settingsManager = koinInject<SettingsManager>()
-        val appearanceSettings by settingsManager.appearanceSettings.collectAsState()
+    AuthenticationWrapper {
+        TabNavigator(HomeTab) {
+            val settingsManager = koinInject<SettingsManager>()
+            val appearanceSettings by settingsManager.appearanceSettings.collectAsState()
 
-        key(appearanceSettings) {
-            AppTheme {
-                Scaffold (
-                    modifier = Modifier.fillMaxSize(),
-                    bottomBar = {
-                        Column {
-                            NavigationBar (contentColor = MaterialTheme.colorScheme.surfaceContainer, ) {
-                                TabNavigationItem(HomeTab)
-                                TabNavigationItem(CalendarTab)
-                                TabNavigationItem(SyncTab)
-                                TabNavigationItem(SettingsTab)
+            key(appearanceSettings) {
+                AppTheme {
+                    Scaffold (
+                        modifier = Modifier.fillMaxSize(),
+                        bottomBar = {
+                            Column {
+                                NavigationBar (contentColor = MaterialTheme.colorScheme.surfaceContainer, ) {
+                                    TabNavigationItem(HomeTab)
+                                    TabNavigationItem(CalendarTab)
+                                    TabNavigationItem(SyncTab)
+                                    TabNavigationItem(SettingsTab)
+                                }
+                                Spacer(modifier = Modifier.fillMaxWidth().height(20.dp).background(MaterialTheme.colorScheme.surfaceContainer))
                             }
-                            Spacer(modifier = Modifier.fillMaxWidth().height(20.dp).background(MaterialTheme.colorScheme.surfaceContainer))
+                        },
+                        content = {
+                            Column (
+                                modifier = Modifier.padding(it)
+                            ) {
+                                CurrentTab()
+                            }
                         }
-                    },
-                    content = {
-                        Column (
-                            modifier = Modifier.padding(it)
-                        ) {
-                            CurrentTab()
-                        }
-                    }
-                )
+                    )
+                }
             }
         }
     }
