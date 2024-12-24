@@ -17,8 +17,6 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
-import org.zcorp.zidary.model.data.AppearanceSettings
-import org.zcorp.zidary.model.data.SecuritySettings
 import org.zcorp.zidary.view.components.navigations.CalendarTab
 import org.zcorp.zidary.view.components.navigations.HomeTab
 import org.zcorp.zidary.view.components.navigations.SettingsTab

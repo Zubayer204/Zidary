@@ -31,6 +31,5 @@ enum class AvailableFontFamily {
 
 enum class LockType {
     NONE,
-    PIN,
     BIOMETRIC
 }

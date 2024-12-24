@@ -89,7 +89,7 @@ class SettingsVM(
             try {
                 val updatedSettings = state.value.securitySettings.copy(
                     useAppLock = enabled,
-                    lockType = if (enabled) LockType.PIN else LockType.NONE
+                    lockType = if (enabled) LockType.BIOMETRIC else LockType.NONE
                 )
                 settingsManager.updateSecuritySettings(updatedSettings)
                 _state.update { it.copy(securitySettings = updatedSettings) }
