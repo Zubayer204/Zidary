@@ -3,7 +3,6 @@ package org.zcorp.zidary.viewModel
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.VisualTransformation
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import io.github.vinceglb.filekit.core.PlatformFile
 import kotlinx.coroutines.channels.Channel

@@ -90,7 +90,7 @@ kotlin {
             implementation(libs.material3.window.size.multiplatform)
 
             // For storing settings across sessions
-            implementation(libs.multiplatform.settings.no.arg)
+            implementation(libs.multiplatform.settings)
 
             // For beautiful text animations
             implementation(libs.texty)

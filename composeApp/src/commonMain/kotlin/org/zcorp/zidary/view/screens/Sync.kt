@@ -69,6 +69,8 @@ object Sync: Screen {
         val filePickerLauncher = rememberFilePickerLauncher(type = PickerType.File(listOf("zidary"))) { file ->
             if (file != null) {
                 viewModel.pickFileForImport(file)
+            } else {
+                viewModel.errorLoadingFile()
             }
             println("Picked file: $file")
         }

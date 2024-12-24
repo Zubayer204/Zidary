@@ -5,6 +5,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import org.koin.compose.koinInject
+import org.zcorp.zidary.model.data.ThemeMode
+import org.zcorp.zidary.viewModel.SettingsManager
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -84,14 +89,31 @@ private val darkScheme = darkColorScheme(
 
 @Composable
 fun AppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    settingsManager: SettingsManager = koinInject(),
     content: @Composable() () -> Unit
 ) {
-    val colorScheme =  if (darkTheme) darkScheme else lightScheme
+    val appearanceSettings by settingsManager.appearanceSettings.collectAsState()
+
+    val darkTheme = when (appearanceSettings.themeMode) {
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        ThemeMode.DARK -> true
+        ThemeMode.LIGHT -> false
+    }
+
+    val colorScheme = when {
+//        appearanceSettings.useCustomAccentColor && appearanceSettings.accentColor != null -> {
+//            (
+//                accentColor = Color(appearanceSettings.accentColor!!),
+//                darkTheme = darkTheme
+//            )
+//        }
+        darkTheme -> darkScheme
+        else -> lightScheme
+    }
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = AppTypography(),
+        typography = AppTypography(appearanceSettings.fontFamily),
         content = content
     )
 }

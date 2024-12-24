@@ -1,0 +1,45 @@
+package org.zcorp.zidary.viewModel
+
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import org.zcorp.zidary.model.data.AppearanceSettings
+import org.zcorp.zidary.model.data.AvailableFontFamily
+import org.zcorp.zidary.model.data.LockType
+import org.zcorp.zidary.model.data.SecuritySettings
+import org.zcorp.zidary.model.data.SettingsRepository
+import org.zcorp.zidary.model.data.ThemeMode
+
+class SettingsManager(
+    private val settingsRepository: SettingsRepository
+) {
+    private val _appearanceSettings = MutableStateFlow(AppearanceSettings())
+    val appearanceSettings: StateFlow<AppearanceSettings> = _appearanceSettings.asStateFlow()
+
+    private val _securitySettings = MutableStateFlow(SecuritySettings())
+    val securitySettings: StateFlow<SecuritySettings> = _securitySettings.asStateFlow()
+
+    init {
+        _appearanceSettings.update { settingsRepository.getAppearanceSettings() }
+        _securitySettings.update { settingsRepository.getSecuritySettings() }
+    }
+
+    fun updateAppearanceSettings(settings: AppearanceSettings) {
+        settingsRepository.updateAppearanceSettings(settings)
+        _appearanceSettings.update { settings }
+    }
+
+    fun updateSecuritySettings(settings: SecuritySettings) {
+        settingsRepository.updateSecuritySettings(settings)
+        _securitySettings.update { settings }
+    }
+
+    fun getCurrentTheme(): ThemeMode = appearanceSettings.value.themeMode
+    fun getCurrentFontFamily(): AvailableFontFamily = appearanceSettings.value.fontFamily
+    fun getAccentColor(): Long? = appearanceSettings.value.accentColor
+
+    fun isAppLockEnabled(): Boolean = securitySettings.value.useAppLock
+    fun getLockType(): LockType = securitySettings.value.lockType
+    fun shouldHideEntryPreviews(): Boolean = securitySettings.value.hideEntryPreviews
+}
