@@ -2,8 +2,6 @@ package org.zcorp.zidary.view.components.settings
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fingerprint
-import androidx.compose.material.icons.filled.PanoramaFishEye
-import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import org.zcorp.zidary.model.data.SecuritySettings

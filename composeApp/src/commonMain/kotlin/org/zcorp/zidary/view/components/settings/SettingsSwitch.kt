@@ -50,7 +50,7 @@ fun SettingsClickableElementWithToggle(
                 )
             }
         }
-        Switch(modifier = Modifier.padding(start = 32.dp), checked = checked, onCheckedChange = onCheckedChange)
+        Switch(modifier = Modifier.padding(start = 16.dp), checked = checked, onCheckedChange = onCheckedChange)
     }
     Spacer(modifier = Modifier.padding(top = 12.dp))
 }
