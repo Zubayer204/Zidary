@@ -3,6 +3,11 @@ package org.zcorp.zidary.model.data
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class GeneralSettings(
+    val writingReminderSet: Boolean = false,
+)
+
+@Serializable
 data class AppearanceSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val fontFamily: AvailableFontFamily = AvailableFontFamily.EPILOGUE,

@@ -11,8 +11,20 @@ class SettingsRepository(
     }
 ) {
     companion object {
+        private const val GENERAL_SETTINGS_KEY = "general_settings"
         private const val APPEARANCE_SETTINGS_KEY = "appearance_settings"
         private const val SECURITY_SETTINGS_KEY = "security_settings"
+    }
+
+    fun getGeneralSettings(): GeneralSettings {
+        return settings.getStringOrNull(GENERAL_SETTINGS_KEY)?.let {
+            json.decodeFromString(GeneralSettings.serializer(), it)
+        } ?: GeneralSettings()
+    }
+
+    fun updateGeneralSettings(settings: GeneralSettings) {
+        val serialized = json.encodeToString(GeneralSettings.serializer(), settings)
+        this.settings.putString(GENERAL_SETTINGS_KEY, serialized)
     }
 
     fun getAppearanceSettings(): AppearanceSettings {

@@ -106,6 +106,12 @@ kotlin {
 
             // For file handling
             implementation(libs.filekit.compose)
+
+            // For local notifications
+            implementation(libs.alarmee)
+
+            // For permission management
+            implementation(libs.calf.permissions)
         }
     }
 }
