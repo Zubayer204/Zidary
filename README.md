@@ -51,7 +51,90 @@ So, What are you waiting for? Let's write your life your way!
 
 ## Architecture
 
-TODO()
+Zidary follows the MVVM (Model-View-ViewModel) architecture pattern with a clean separation of concerns. The app is structured into three main layers:
+
+### Layer Overview
+```mermaid
+graph TB
+    subgraph View[View Layer]
+        Screens[Screens]
+        Components[Components]
+    end
+    
+    subgraph ViewModel[ViewModel Layer]
+        VM[ViewModels]
+        State[State Management]
+        Events[Event Handling]
+    end
+    
+    subgraph Model[Model Layer]
+        Data[Data Models]
+        Repository[Repositories]
+        Database[Database]
+        Settings[Settings]
+    end
+    
+    View --> ViewModel
+    ViewModel --> Model
+    Model -.-> ViewModel
+    ViewModel -.-> View
+```
+
+### Component Details
+```mermaid
+graph TB
+    subgraph Screens
+        Home
+        Calendar
+        Settings
+        Sync
+        JournalCompose
+        JournalEdit
+        JournalView
+    end
+    
+    subgraph ViewModels
+        HomeVM
+        CalendarVM
+        SettingsVM
+        SyncVM
+        JournalComposeVM
+        SettingsManager
+    end
+    
+    subgraph Models
+        JournalFactory
+        SettingsRepository
+        AuthManager
+        BiometricAuth
+        Database[(SQLDelight DB)]
+        LocalSettings[(Settings Store)]
+    end
+    
+    Home --> HomeVM
+    Calendar --> CalendarVM
+    Settings --> SettingsVM
+    Sync --> SyncVM
+    JournalCompose --> JournalComposeVM
+    JournalEdit --> JournalComposeVM
+    
+    HomeVM --> JournalFactory
+    CalendarVM --> JournalFactory
+    SyncVM --> JournalFactory
+    JournalComposeVM --> JournalFactory
+    SettingsVM --> SettingsManager
+    SettingsManager --> SettingsRepository
+
+    JournalView --> JournalFactory
+    
+    JournalFactory --> Database
+    SettingsRepository --> LocalSettings
+
+    ViewModels --> SettingsRepository
+    ViewModels --> AuthManager
+
+    AuthManager --> BiometricAuth
+```
 
 ## Libraries Used
 
