@@ -14,7 +14,6 @@ material3WindowSizeClassMultiplatform = "0.5.0"
 multiplatformSettings = "1.2.0"
 koinCore = "4.0.0"
 mvvmCore = "0.16.1"
-permissionsCompose = "0.18.1"
 texty = "1.0.0-alpha"
 voyager = "1.1.0-beta03"
 uiAndroid = "1.7.6"
@@ -22,7 +21,7 @@ sqlDelight = "2.0.2"
 startupRuntime = "1.2.0"
 kotlinx-serialization = "1.7.3"
 cryptography = "0.4.0"
-alarmee = "1.4.1"
+alarmee = "1.5.0"
 
 [libraries]
 calf-permissions = { module = "com.mohamedrejeb.calf:calf-permissions", version.ref = "calfPermissions" }
@@ -38,7 +37,6 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
 mvvm-compose = { module = "dev.icerock.moko:mvvm-compose", version.ref = "mvvmCore" }
 mvvm-core = { module = "dev.icerock.moko:mvvm-core", version.ref = "mvvmCore" }
-permissions-compose = { module = "dev.icerock.moko:permissions-compose", version.ref = "permissionsCompose" }
 texty = { module = "com.arjunjadeja:texty", version.ref = "texty" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }

@@ -1,5 +1,10 @@
 package org.zcorp.zidary.viewModel
 
+import com.mohamedrejeb.calf.permissions.ExperimentalPermissionsApi
+import com.mohamedrejeb.calf.permissions.PermissionStatus
+import com.mohamedrejeb.calf.permissions.isGranted
+import com.mohamedrejeb.calf.permissions.isNotGranted
+import com.mohamedrejeb.calf.permissions.shouldShowRationale
 import com.tweener.alarmee.Alarmee
 import com.tweener.alarmee.AlarmeeScheduler
 import com.tweener.alarmee.AndroidNotificationConfiguration
@@ -57,14 +62,12 @@ class SettingsVM(
         }
     }
 
-    fun showSampleNotification(alarmeeScheduler: AlarmeeScheduler) {
-        alarmeeScheduler.schedule(
+    private fun showSampleNotification(alarmeeScheduler: AlarmeeScheduler) {
+        alarmeeScheduler.push(
             alarmee = Alarmee(
                 uuid = "Test",
                 notificationTitle = "Notification Sample",
                 notificationBody = "This is how your notification will look like",
-                scheduledDateTime =
-                (Clock.System.now().plus(2.seconds)).toLocalDateTime(TimeZone.currentSystemDefault()),
                 androidNotificationConfiguration = AndroidNotificationConfiguration(
                     priority = AndroidNotificationPriority.DEFAULT,
                     channelId = "dailyWritingReminder",
@@ -73,39 +76,90 @@ class SettingsVM(
         )
     }
 
-    fun updateWritingReminderSettings(enabled: Boolean, alarmeeScheduler: AlarmeeScheduler) {
+    @OptIn(ExperimentalPermissionsApi::class)
+    fun handleWritingReminderToggle(
+        enabled: Boolean,
+        permissionStatus: PermissionStatus,
+        alarmeeScheduler: AlarmeeScheduler,
+        requestPermission: () -> Unit
+    ) {
         viewModelScope.launch {
             try {
-                val updatedSettings = state.value.generalSettings.copy(writingReminderSet = enabled)
-                settingsManager.updateGeneralSettings(updatedSettings)
-                _state.update { it.copy(generalSettings = updatedSettings) }
-
                 if (enabled) {
-                    alarmeeScheduler.schedule(
-                        alarmee = Alarmee(
-                            uuid = alarmeeWritingReminderUUID,
-                            notificationTitle = "Write a journal entry",
-                            notificationBody = "Let's fill up this barren land of journals with all sorts of random thoughts and stories, shall we?",
-                            scheduledDateTime = LocalDateTime(year = currentTime.year, monthNumber = currentTime.monthNumber, dayOfMonth = currentTime.dayOfMonth, hour = 20, minute = 0),
-                            repeatInterval = RepeatInterval.Daily,
-                            androidNotificationConfiguration = AndroidNotificationConfiguration(
-                                priority = AndroidNotificationPriority.DEFAULT,
-                                channelId = "dailyWritingReminder",
-                            )
-                        )
-                    )
-                    _events.send(SettingsEvent.SettingsUpdated("Writing reminder enabled: You will be reminded to write a journal entry every day at 8:00 PM"))
+                    when {
+                        permissionStatus.isGranted -> {
+                            showSampleNotification(alarmeeScheduler)
+                            enableWritingReminder(alarmeeScheduler)
+                        }
+                        else -> {
+                            requestPermission()
+                        }
+                    }
                 } else {
-                    _events.send(SettingsEvent.SettingsUpdated("Writing reminder disabled"))
-                    alarmeeScheduler.cancel(alarmeeWritingReminderUUID)
+                    disableWritingReminder(alarmeeScheduler)
                 }
             } catch (e: Exception) {
                 _events.send(SettingsEvent.ShowError("Failed to update writing reminder settings: ${e.message}"))
-                val updatedSettings = state.value.generalSettings.copy(writingReminderSet = false)
-                settingsManager.updateGeneralSettings(updatedSettings)
-                _state.update { it.copy(generalSettings = updatedSettings) }
             }
         }
+    }
+
+    @OptIn(ExperimentalPermissionsApi::class)
+    fun handlePermissionResult(
+        permissionStatus: PermissionStatus,
+        alarmeeScheduler: AlarmeeScheduler
+    ) {
+        viewModelScope.launch {
+            when {
+                permissionStatus.isGranted -> {
+                    showSampleNotification(alarmeeScheduler)
+                    enableWritingReminder(alarmeeScheduler)
+                }
+                permissionStatus.shouldShowRationale -> {
+                    _events.send(SettingsEvent.ShowError("Notifications permissions must be granted for reminder functionality to work"))
+                    disableWritingReminder(alarmeeScheduler)
+                }
+                permissionStatus.isNotGranted -> {
+                    disableWritingReminder(alarmeeScheduler)
+                }
+            }
+        }
+    }
+
+    private suspend fun enableWritingReminder(alarmeeScheduler: AlarmeeScheduler) {
+        val updatedSettings = state.value.generalSettings.copy(writingReminderSet = true)
+        settingsManager.updateGeneralSettings(updatedSettings)
+        _state.update { it.copy(generalSettings = updatedSettings) }
+
+        alarmeeScheduler.schedule(
+            alarmee = Alarmee(
+                uuid = alarmeeWritingReminderUUID,
+                notificationTitle = "Write a journal entry",
+                notificationBody = "Let's fill up this barren land of journals with all sorts of random thoughts and stories, shall we?",
+                scheduledDateTime = LocalDateTime(
+                    year = currentTime.year,
+                    monthNumber = currentTime.monthNumber,
+                    dayOfMonth = currentTime.dayOfMonth,
+                    hour = 20,
+                    minute = 0
+                ),
+                repeatInterval = RepeatInterval.Daily,
+                androidNotificationConfiguration = AndroidNotificationConfiguration(
+                    priority = AndroidNotificationPriority.DEFAULT,
+                    channelId = "dailyWritingReminder",
+                )
+            )
+        )
+        _events.send(SettingsEvent.SettingsUpdated("Writing reminder enabled: You will be reminded to write a journal entry every day at 8:00 PM"))
+    }
+
+    private suspend fun disableWritingReminder(alarmeeScheduler: AlarmeeScheduler) {
+        val updatedSettings = state.value.generalSettings.copy(writingReminderSet = false)
+        settingsManager.updateGeneralSettings(updatedSettings)
+        _state.update { it.copy(generalSettings = updatedSettings) }
+
+        alarmeeScheduler.cancel(alarmeeWritingReminderUUID)
+        _events.send(SettingsEvent.SettingsUpdated("Writing reminder disabled"))
     }
 
     fun updateTheme(theme: ThemeMode) {

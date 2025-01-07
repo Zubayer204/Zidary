@@ -44,8 +44,8 @@ class Settings: Screen {
         val state by viewModel.state.collectAsState()
         val snackbarHostState = remember { SnackbarHostState() }
         val alarmeeScheduler = rememberAlarmeeScheduler(alarmeePlatformConfiguration)
-        val notificationPermissionState = rememberPermissionState(Permission.Notification)
-        val userEnabledReminder = remember { mutableStateOf(state.generalSettings.writingReminderSet) }
+        val notificationPermissionState = rememberPermissionState(Permission.RemoteNotification)
+        val userEnabledReminder = remember { mutableStateOf(false) }
 
         LaunchedEffect(Unit) {
             viewModel.events.collect { event ->
@@ -60,36 +60,12 @@ class Settings: Screen {
             }
         }
 
-        LaunchedEffect(userEnabledReminder.value) {
-            if (userEnabledReminder.value == state.generalSettings.writingReminderSet) return@LaunchedEffect // Skip when the user hasn't changed the setting
-            if (userEnabledReminder.value) { // Only request permission if the user actively enabled the reminder
-                if (notificationPermissionState.status.isNotGranted) {
-                    notificationPermissionState.launchPermissionRequest()
-                } else { // Permission already granted
-                    viewModel.updateWritingReminderSettings(enabled = true, alarmeeScheduler = alarmeeScheduler)
-                }
-            } else { // User disabled the reminder
-                viewModel.updateWritingReminderSettings(enabled = false, alarmeeScheduler = alarmeeScheduler)
-            }
-        }
-
         LaunchedEffect(notificationPermissionState.status) {
-            if (userEnabledReminder.value) { // Only react to permission changes if the user intends to have reminders enabled.
-                if (notificationPermissionState.status.isGranted) {
-                    // If the user enabled reminders and permission is granted, update the setting and schedule
-                    viewModel.showSampleNotification(alarmeeScheduler)
-                    viewModel.updateWritingReminderSettings(enabled = true, alarmeeScheduler = alarmeeScheduler)
-
-                } else if (notificationPermissionState.status.shouldShowRationale) {
-                    snackbarHostState.showSnackbar("Notifications permissions must be granted for reminder functionality to work")
-                    // If the user denied permission after rationale, disable the setting.
-                    userEnabledReminder.value = false
-
-                } else if (notificationPermissionState.status.isNotGranted && !notificationPermissionState.status.shouldShowRationale) {
-                    // User denied permission and doesn't want to see rationale. Disable the setting.
-                    userEnabledReminder.value = false
-
-                }
+            if (userEnabledReminder.value && !state.generalSettings.writingReminderSet) {
+                viewModel.handlePermissionResult(
+                    notificationPermissionState.status,
+                    alarmeeScheduler
+                )
             }
         }
 
@@ -119,6 +95,12 @@ class Settings: Screen {
                             settings = state.generalSettings,
                             onWritingReminderSettingsChanged = { enabled ->
                                 userEnabledReminder.value = enabled
+                                viewModel.handleWritingReminderToggle(
+                                    enabled = enabled,
+                                    permissionStatus = notificationPermissionState.status,
+                                    alarmeeScheduler = alarmeeScheduler,
+                                    requestPermission = notificationPermissionState::launchPermissionRequest
+                                )
                             }
                         )
                     }
