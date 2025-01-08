@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.2.0](https://github.com/Zubayer204/Zidary/compare/v1.1.0...v1.2.0) (2025-01-08)
+
+
+### Features
+
+* Added functionality for daily writing reminder ([8f2ff6b](https://github.com/Zubayer204/Zidary/commit/8f2ff6b7d7d6b3c2e62f9bd6c0326cb454b0b7af))
+* Implemented hide preview settings functionality ([357b6c5](https://github.com/Zubayer204/Zidary/commit/357b6c533ff41f91e901acc5ab430dcb5cb58cb4))
+* Made time formatting follow 12h style ([a9cc6cd](https://github.com/Zubayer204/Zidary/commit/a9cc6cded54647b3c395c40d40c92f1743740583))
+
+
+### Bug Fixes
+
+* Fixed issue with alarm duplication on settings page ([708b143](https://github.com/Zubayer204/Zidary/commit/708b1435e807eb6385407f0fb4928f176ef26d62))
+* Fixed sample notification issue on iOS ([39cc7b3](https://github.com/Zubayer204/Zidary/commit/39cc7b309478106fbd63178223d24e235041734c))
+
 ## 1.1.0 (2024-12-24)
 
 
