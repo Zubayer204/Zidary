@@ -162,6 +162,61 @@ graph TB
 | Notification Management | [Alarmee](https://github.com/Tweener/alarmee)                                                                                         |
 | Permission Management   | [Calf](https://github.com/MohamedRejeb/Calf)                                                                                          |
 
+## Set up the environment
+
+> **Warning**
+> You need a Mac with macOS to write and run iOS-specific code on simulated or real devices.
+> This is an Apple requirement.
+
+To work with this app, you need the following:
+
+* A machine running a recent version of macOS
+* [Xcode](https://apps.apple.com/us/app/xcode/id497799835)
+* [Android Studio](https://developer.android.com/studio)
+* The [Kotlin Multiplatform Mobile plugin](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile)
+* The [CocoaPods dependency manager](https://kotlinlang.org/docs/native-cocoapods.html)
+
+### On Android
+
+To run your application on an Android emulator:
+
+1. Ensure you have an Android virtual device available. Otherwise, [create one](https://developer.android.com/studio/run/managing-avds#createavd).
+2. In the list of run configurations, select `androidApp`.
+3. Choose your virtual device and click **Run**:
+
+<details>
+  <summary>Alternatively, use Gradle</summary>
+
+To install an Android application on a real Android device or an emulator, run `./gradlew installDebug` in the terminal.
+
+</details>
+
+### On iOS
+
+#### Running on a simulator
+
+To run your application on an iOS simulator in Android Studio, modify the `iosApp` run configuration:
+
+1. In the list of run configurations, select **Edit Configurations**:
+2. Navigate to **iOS Application** | **iosApp**.
+3. In the **Execution target** list, select your target device. Click **OK**:
+4. The `iosApp` run configuration is now available. Click **Run** next to your virtual device:
+
+
+#### Running on a real device
+
+You can run your Compose Multiplatform application on a real iOS device for free.
+To do so, you'll need the following:
+
+* The `TEAM_ID` associated with your [Apple ID](https://support.apple.com/en-us/HT204316)
+* The iOS device registered in Xcode
+
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
 ## Future Roadmap
 
 - [ ] Auto encrypted sync across local devices 
