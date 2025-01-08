@@ -49,6 +49,18 @@ So, What are you waiting for? Let's write your life your way!
 - 🎯 Intuitive user interface
 
 
+## Demo
+
+Here is a demo of most of the features in a working.
+
+### iOS
+
+https://github.com/user-attachments/assets/d0a14807-a617-479f-b03b-c3a33b413a7b
+
+### Android
+TODO
+
+
 ## Architecture
 
 Zidary follows the MVVM (Model-View-ViewModel) architecture pattern with a clean separation of concerns. The app is structured into three main layers:
