@@ -26,8 +26,6 @@ import org.zcorp.zidary.model.data.AvailableFontFamily
 import org.zcorp.zidary.model.data.GeneralSettings
 import org.zcorp.zidary.model.data.SecuritySettings
 import org.zcorp.zidary.model.data.ThemeMode
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 class SettingsVM(
     private val settingsManager: SettingsManager,
@@ -88,10 +86,12 @@ class SettingsVM(
                 if (enabled) {
                     when {
                         permissionStatus.isGranted -> {
+                            println("permission granted")
                             showSampleNotification(alarmeeScheduler)
                             enableWritingReminder(alarmeeScheduler)
                         }
                         else -> {
+                            print("requesting permission")
                             requestPermission()
                         }
                     }

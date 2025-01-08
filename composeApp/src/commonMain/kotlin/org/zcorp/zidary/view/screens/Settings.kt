@@ -22,10 +22,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import com.mohamedrejeb.calf.permissions.ExperimentalPermissionsApi
 import com.mohamedrejeb.calf.permissions.Permission
-import com.mohamedrejeb.calf.permissions.isGranted
-import com.mohamedrejeb.calf.permissions.isNotGranted
 import com.mohamedrejeb.calf.permissions.rememberPermissionState
-import com.mohamedrejeb.calf.permissions.shouldShowRationale
 import com.tweener.alarmee.configuration.AlarmeePlatformConfiguration
 import com.tweener.alarmee.rememberAlarmeeScheduler
 import org.koin.compose.koinInject
@@ -44,17 +41,23 @@ class Settings: Screen {
         val state by viewModel.state.collectAsState()
         val snackbarHostState = remember { SnackbarHostState() }
         val alarmeeScheduler = rememberAlarmeeScheduler(alarmeePlatformConfiguration)
-        val notificationPermissionState = rememberPermissionState(Permission.RemoteNotification)
+        val notificationPermissionState = rememberPermissionState(Permission.Notification)
         val userEnabledReminder = remember { mutableStateOf(false) }
 
         LaunchedEffect(Unit) {
             viewModel.events.collect { event ->
                 when (event) {
                     is SettingsEvent.ShowError -> {
-                        snackbarHostState.showSnackbar(event.message)
+                        snackbarHostState.showSnackbar(
+                            message = event.message,
+                            withDismissAction = true
+                        )
                     }
                     is SettingsEvent.SettingsUpdated -> {
-                        snackbarHostState.showSnackbar(event.message)
+                        snackbarHostState.showSnackbar(
+                            message = event.message,
+                            withDismissAction = true
+                        )
                     }
                 }
             }

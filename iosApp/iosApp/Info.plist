@@ -46,6 +46,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-    <key>NSFaceIDUsageDescription</key>
-    <string>$(PRODUCT_NAME) Authentication with TouchId or FaceID</string></dict>
+	<key>NSFaceIDUsageDescription</key>
+	<string>$(PRODUCT_NAME) Authentication with TouchId or FaceID</string>
+	<key>NSUserNotificationsUsageDescription</key>
+    <string>Notifications permission is required to show notifications</string>
+</dict>
 </plist>
