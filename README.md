@@ -51,15 +51,15 @@ So, What are you waiting for? Let's write your life your way!
 
 ## Demo
 
-Here is a demo of most of the features in a working.
+Here is a demo of most of the features in a working app.
+
+### Android
+
+https://github.com/user-attachments/assets/a95cb7ad-a430-4373-87f1-28b4d792dd6a
 
 ### iOS
 
 https://github.com/user-attachments/assets/d0a14807-a617-479f-b03b-c3a33b413a7b
-
-### Android
-TODO
-
 
 ## Architecture
 
