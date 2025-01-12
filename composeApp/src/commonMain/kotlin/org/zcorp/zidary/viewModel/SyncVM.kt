@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.zcorp.zidary.model.data.ExportData
 import org.zcorp.zidary.model.data.ExportedEntry
@@ -24,8 +23,9 @@ import org.zcorp.zidary.utils.CryptoResult
 import org.zcorp.zidary.utils.Encryption
 import org.zcorp.zidary.utils.epochMillisecondsToLocalDate
 
-class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
-    val REQUIRED_PASSPHRASE_LENGTH = 6
+
+class SyncVM(private val journalFactory: JournalFactory) : ViewModel() {
+    val requiredPassphraseLength = 6
     private val timeZone = TimeZone.currentSystemDefault()
     private val _state = MutableStateFlow(SyncScreenState())
     val state = _state.asStateFlow()
@@ -42,18 +42,36 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
     fun updateDateRange(startDate: Long?, endDate: Long?) {
         val currentDate = Clock.System.now().toEpochMilliseconds()
 
-        _state.update { it.copy(
-            startDate = startDate?.let { stDate -> epochMillisecondsToLocalDate(stDate, timeZone) },
-            endDate = endDate?.let { edDate -> epochMillisecondsToLocalDate(edDate, timeZone) } ?: epochMillisecondsToLocalDate(currentDate, timeZone)
-        ) }
+        _state.update {
+            it.copy(
+                startDate = startDate?.let { stDate ->
+                    epochMillisecondsToLocalDate(
+                        stDate,
+                        timeZone
+                    )
+                },
+                endDate = endDate?.let { edDate -> epochMillisecondsToLocalDate(edDate, timeZone) }
+                    ?: epochMillisecondsToLocalDate(currentDate, timeZone)
+            )
+        }
     }
 
     fun updateEncryptionPassphrase(passphrase: String) {
-        _state.update { it.copy( encryptionPassphrase = passphrase, enabledEncryptionPassphrase = true ) }
+        _state.update {
+            it.copy(
+                encryptionPassphrase = passphrase,
+                enabledEncryptionPassphrase = true
+            )
+        }
     }
 
     fun updateDecryptionPassphrase(passphrase: String) {
-        _state.update { it.copy( decryptionPassphrase = passphrase, enabledDecryptionPassphrase = true ) }
+        _state.update {
+            it.copy(
+                decryptionPassphrase = passphrase,
+                enabledDecryptionPassphrase = true
+            )
+        }
     }
 
     fun pickFileForImport(file: PlatformFile) {
@@ -64,23 +82,27 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
         viewModelScope.launch {
             try {
                 println("Exporting data")
-                if (state.value.encryptionPassphrase.length < REQUIRED_PASSPHRASE_LENGTH) {
+                if (state.value.encryptionPassphrase.length < requiredPassphraseLength) {
                     _events.send(SyncScreenEvent.ShowError("Passphrase must be at least 6 characters long"))
                     return@launch
                 }
 
                 println("Starting database query...")
-                val exportableEntries = if (state.value.startDate != null && state.value.endDate != null) {
-                    println("Querying date range: ${state.value.startDate} to ${state.value.endDate}")
-                    val entriesFlow = journalFactory.getEntriesByDateRange(state.value.startDate!!, state.value.endDate!!)
-                    println("Got flow, converting to list...")
-                    entriesFlow.first()
-                } else {
-                    println("Querying all entries...")
-                    val entriesFlow = journalFactory.getAll()
-                    println("Got flow, converting to list...")
-                    entriesFlow.first()
-                }
+                val exportableEntries =
+                    if (state.value.startDate != null && state.value.endDate != null) {
+                        println("Querying date range: ${state.value.startDate} to ${state.value.endDate}")
+                        val entriesFlow = journalFactory.getEntriesByDateRange(
+                            state.value.startDate!!,
+                            state.value.endDate!!
+                        )
+                        println("Got flow, converting to list...")
+                        entriesFlow.first()
+                    } else {
+                        println("Querying all entries...")
+                        val entriesFlow = journalFactory.getAll()
+                        println("Got flow, converting to list...")
+                        entriesFlow.first()
+                    }
 
                 println("Data collected from DB")
                 println("Number of entries: ${exportableEntries.size}")
@@ -101,7 +123,10 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
                 println("Data collected from DB")
 
                 val jsonString = Json.encodeToString(exportData)
-                val encrypted = Encryption.encrypt(jsonString.encodeToByteArray(), state.value.encryptionPassphrase)
+                val encrypted = Encryption.encrypt(
+                    jsonString.encodeToByteArray(),
+                    state.value.encryptionPassphrase
+                )
 
                 println("Encrypted data: $encrypted")
 
@@ -121,7 +146,11 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
     fun dataExported(file: PlatformFile) {
         // Clear the encryption passphrase
         _state.update {
-            it.copy(encryptionPassphrase = "", enabledEncryptionPassphrase = false, isExporting = false)
+            it.copy(
+                encryptionPassphrase = "",
+                enabledEncryptionPassphrase = false,
+                isExporting = false
+            )
         }
         viewModelScope.launch {
             _events.send(SyncScreenEvent.ExportDone(file))
@@ -134,7 +163,7 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
                 _events.send(SyncScreenEvent.ShowError("No file selected for import"))
             }
             return
-        } else if (state.value.decryptionPassphrase.length < REQUIRED_PASSPHRASE_LENGTH) {
+        } else if (state.value.decryptionPassphrase.length < requiredPassphraseLength) {
             viewModelScope.launch {
                 _events.send(SyncScreenEvent.ShowError("Passphrase must be at least 6 characters long"))
             }
@@ -144,7 +173,10 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
         println("Importing data from file: ${state.value.pickedFileForImport!!.name}")
 
         viewModelScope.launch {
-            Encryption.decrypt(state.value.pickedFileForImport!!.readBytes(), state.value.decryptionPassphrase).let { result ->
+            Encryption.decrypt(
+                state.value.pickedFileForImport!!.readBytes(),
+                state.value.decryptionPassphrase
+            ).let { result ->
                 when (result) {
                     is CryptoResult.Error -> {
                         if (result.exception.message?.contains("BAD_DECRYPT") == true) {
@@ -153,11 +185,13 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
                             _events.send(SyncScreenEvent.ShowError("Error decrypting file: ${result.exception.message ?: "Unknown error"}"))
                         }
                     }
+
                     is CryptoResult.Success -> {
                         val decryptedData = result.data.decodeToString()
                         println("Decrypted data: $decryptedData")
                         try {
-                            val importData = Json.decodeFromString(ExportData.serializer(), decryptedData)
+                            val importData =
+                                Json.decodeFromString(ExportData.serializer(), decryptedData)
                             println("Imported data: $importData")
                             for (entry in importData.entries) {
                                 journalFactory.upsert(
@@ -171,7 +205,11 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
                             }
                             // Clear the picked file and passphrases
                             _state.update {
-                                it.copy(pickedFileForImport = null, decryptionPassphrase = "", enabledDecryptionPassphrase = false)
+                                it.copy(
+                                    pickedFileForImport = null,
+                                    decryptionPassphrase = "",
+                                    enabledDecryptionPassphrase = false
+                                )
                             }
                             _events.send(SyncScreenEvent.ImportDone(importData.entries.size))
                         } catch (e: Exception) {
@@ -188,6 +226,7 @@ class SyncVM(private val journalFactory: JournalFactory): ViewModel() {
             _events.send(SyncScreenEvent.ImportStart)
         }
     }
+
     fun errorLoadingFile() {
         viewModelScope.launch {
             _events.send(SyncScreenEvent.ShowError("Error loading file"))
@@ -222,7 +261,8 @@ sealed class SyncScreenEvent {
             return data.contentHashCode()
         }
     }
-    data class ExportDone(val file: PlatformFile): SyncScreenEvent()
-    data object ImportStart: SyncScreenEvent()
-    data class ImportDone(val entriesImported: Int): SyncScreenEvent()
+
+    data class ExportDone(val file: PlatformFile) : SyncScreenEvent()
+    data object ImportStart : SyncScreenEvent()
+    data class ImportDone(val entriesImported: Int) : SyncScreenEvent()
 }

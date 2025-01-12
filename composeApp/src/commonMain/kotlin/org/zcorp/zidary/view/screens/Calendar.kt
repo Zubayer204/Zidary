@@ -18,11 +18,11 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Text
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -59,7 +59,7 @@ import org.zcorp.zidary.viewModel.CalendarVM
 import org.zcorp.zidary.viewModel.JournalComposeVM
 import org.zcorp.zidary.viewModel.SettingsManager
 
-class Calendar: Screen {
+class Calendar : Screen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
@@ -87,12 +87,15 @@ class Calendar: Screen {
                             journalComposeVM
                         ) { navigator.pop() })
                     }
+
                     is CalendarScreenEvent.NavigateToView -> {
                         navigator.push(JournalView(event.entry) { navigator.pop() })
                     }
+
                     is CalendarScreenEvent.EntryDeleted -> {
                         snackbarHostState.showSnackbar("Entry Deleted")
                     }
+
                     is CalendarScreenEvent.ShowError -> {
                         snackbarHostState.showSnackbar("Error: ${event.message}")
                     }
@@ -170,7 +173,8 @@ class Calendar: Screen {
                 // Calendar dates
                 val firstDayOfMonth = LocalDate(state.currentYear, state.currentMonth, 1)
                 val totalDaysInMonth = getTotalDaysInMonth(firstDayOfMonth)
-                val firstDayOfWeek = firstDayOfMonth.dayOfWeek.ordinal + 1 // initial ordinal is 0, so we add one to it
+                val firstDayOfWeek =
+                    firstDayOfMonth.dayOfWeek.ordinal + 1 // initial ordinal is 0, so we add one to it
 
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(7),
@@ -255,11 +259,12 @@ class Calendar: Screen {
         // Date Picker Dialog
         if (state.showDatePicker) {
             val datePickerState = rememberDatePickerState(
-                initialSelectedDateMillis = state.selectedDate.toEpochDays().toLong() * 24 * 60 * 60 * 1000
+                initialSelectedDateMillis = state.selectedDate.toEpochDays()
+                    .toLong() * 24 * 60 * 60 * 1000
             )
 
             DatePickerDialog(
-                onDismissRequest = {  viewModel.onDatePickerStatusChange(false) },
+                onDismissRequest = { viewModel.onDatePickerStatusChange(false) },
                 confirmButton = {
                     TextButton(onClick = {
                         datePickerState.selectedDateMillis?.let {

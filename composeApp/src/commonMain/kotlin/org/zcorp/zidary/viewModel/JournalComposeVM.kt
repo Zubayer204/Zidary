@@ -84,7 +84,7 @@ class JournalComposeVM(
                         title = currentState.title,
                         body = currentState.body,
                         entryTime = currentState.entryTime
-                    ).collect {entry ->
+                    ).collect { entry ->
                         println("Updated Entry: $entry")
                         _events.send(JournalComposeEvent.EntryAdded)
                         // reset state for a clean editor next time

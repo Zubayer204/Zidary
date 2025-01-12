@@ -6,24 +6,26 @@ import com.tweener.alarmee.channel.AlarmeeNotificationChannel
 import com.tweener.alarmee.configuration.AlarmeeAndroidPlatformConfiguration
 import com.tweener.alarmee.configuration.AlarmeePlatformConfiguration
 import org.koin.dsl.module
-import org.zcorp.zidary.db.ZidaryDatabase
 import org.zcorp.zidary.R
+import org.zcorp.zidary.db.ZidaryDatabase
 
 actual val platformModule = module {
     single { database }
     single { settings }
 
     // Alarmee
-    factory<AlarmeePlatformConfiguration> { AlarmeeAndroidPlatformConfiguration(
-        R.mipmap.ic_launcher,
-        notificationChannels = listOf(
-            AlarmeeNotificationChannel(
-                id = "dailyWritingReminder",
-                name = "Daily Writing Reminder",
-                importance = NotificationManager.IMPORTANCE_HIGH,
+    factory<AlarmeePlatformConfiguration> {
+        AlarmeeAndroidPlatformConfiguration(
+            R.mipmap.ic_launcher,
+            notificationChannels = listOf(
+                AlarmeeNotificationChannel(
+                    id = "dailyWritingReminder",
+                    name = "Daily Writing Reminder",
+                    importance = NotificationManager.IMPORTANCE_HIGH,
+                )
             )
         )
-    ) }
+    }
 }
 
 lateinit var database: ZidaryDatabase

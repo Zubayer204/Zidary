@@ -29,10 +29,12 @@ fun DateRangePickerDialogue(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(
-                onClick = { onConfirm(
-                    dateRangePickerState.selectedStartDateMillis,
-                    dateRangePickerState.selectedEndDateMillis
-                ) },
+                onClick = {
+                    onConfirm(
+                        dateRangePickerState.selectedStartDateMillis,
+                        dateRangePickerState.selectedEndDateMillis
+                    )
+                },
                 modifier = Modifier.padding(horizontal = 8.dp)
             ) {
                 Text("OK")
@@ -72,7 +74,7 @@ fun DateRangePickerDialogue(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-private object PastSelectableDates: SelectableDates {
+private object PastSelectableDates : SelectableDates {
     override fun isSelectableDate(utcTimeMillis: Long): Boolean {
         return utcTimeMillis <= Clock.System.now().toEpochMilliseconds()
     }

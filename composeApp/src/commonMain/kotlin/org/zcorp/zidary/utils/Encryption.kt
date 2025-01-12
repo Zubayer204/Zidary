@@ -1,14 +1,13 @@
 package org.zcorp.zidary.utils
 
-import kotlin.random.Random
-
 import dev.whyoleg.cryptography.CryptographyProvider
 import dev.whyoleg.cryptography.algorithms.AES
 import dev.whyoleg.cryptography.algorithms.SHA256
+import kotlin.random.Random
 
 sealed class CryptoResult<out T> {
-    data class Success<T>(val data: T): CryptoResult<T>()
-    data class Error(val exception: Exception): CryptoResult<Nothing>()
+    data class Success<T>(val data: T) : CryptoResult<T>()
+    data class Error(val exception: Exception) : CryptoResult<Nothing>()
 }
 
 object Encryption {

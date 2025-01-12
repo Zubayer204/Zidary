@@ -74,11 +74,13 @@ class CalendarVM(private val journalFactory: JournalFactory) : ViewModel() {
 
     fun changeMonth(year: Int, month: Month) {
         viewModelScope.launch {
-            _state.update { it.copy(
-                currentYear = year,
-                currentMonth = month,
-                isLoading = true
-            ) }
+            _state.update {
+                it.copy(
+                    currentYear = year,
+                    currentMonth = month,
+                    isLoading = true
+                )
+            }
             loadEntriesForMonth(year, month)
         }
     }
@@ -88,10 +90,12 @@ class CalendarVM(private val journalFactory: JournalFactory) : ViewModel() {
         currentMonthJob = viewModelScope.launch {
             journalFactory.getEntryDatesForMonth(year, month)
                 .collect { dates ->
-                    _state.update { it.copy(
-                        datesWithEntries = dates,
-                        isLoading = false
-                    ) }
+                    _state.update {
+                        it.copy(
+                            datesWithEntries = dates,
+                            isLoading = false
+                        )
+                    }
                 }
         }
     }
@@ -101,9 +105,11 @@ class CalendarVM(private val journalFactory: JournalFactory) : ViewModel() {
         selectedDateJob = viewModelScope.launch {
             journalFactory.getEntriesByDate(date)
                 .collect { entries ->
-                    _state.update { it.copy(
-                        selectedDateEntries = entries
-                    ) }
+                    _state.update {
+                        it.copy(
+                            selectedDateEntries = entries
+                        )
+                    }
                 }
         }
     }
@@ -139,10 +145,10 @@ data class CalendarScreenState(
         .toLocalDateTime(TimeZone.currentSystemDefault()).month,
     val selectedDate: LocalDate = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault()).date,
-    )
+)
 
 sealed class CalendarScreenEvent {
-    data object EntryDeleted: CalendarScreenEvent()
+    data object EntryDeleted : CalendarScreenEvent()
     data class ShowError(val message: String) : CalendarScreenEvent()
     data class NavigateToEdit(val id: Long) : CalendarScreenEvent()
     data class NavigateToView(val entry: JournalEntry) : CalendarScreenEvent()

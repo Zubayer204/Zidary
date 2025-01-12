@@ -20,13 +20,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,7 +51,7 @@ import org.zcorp.zidary.view.components.DateRangePickerDialogue
 import org.zcorp.zidary.viewModel.SyncScreenEvent
 import org.zcorp.zidary.viewModel.SyncVM
 
-object Sync: Screen {
+object Sync : Screen {
     @Composable
     override fun Content() {
         val viewModel = koinInject<SyncVM>()
@@ -66,21 +66,23 @@ object Sync: Screen {
             }
             println("Saved file: $file")
         }
-        val filePickerLauncher = rememberFilePickerLauncher(type = PickerType.File(listOf("zidary"))) { file ->
-            if (file != null) {
-                viewModel.pickFileForImport(file)
-            } else {
-                viewModel.errorLoadingFile()
+        val filePickerLauncher =
+            rememberFilePickerLauncher(type = PickerType.File(listOf("zidary"))) { file ->
+                if (file != null) {
+                    viewModel.pickFileForImport(file)
+                } else {
+                    viewModel.errorLoadingFile()
+                }
+                println("Picked file: $file")
             }
-            println("Picked file: $file")
-        }
 
         LaunchedEffect(Unit) {
-            viewModel.events.collect  { event ->
+            viewModel.events.collect { event ->
                 when (event) {
                     is SyncScreenEvent.ShowError -> {
                         snackbarHostState.showSnackbar("Error: ${event.message}")
                     }
+
                     is SyncScreenEvent.ExportReady -> {
                         fileSaverLauncher.launch(
                             bytes = event.data,
@@ -88,12 +90,15 @@ object Sync: Screen {
                             extension = "zidary"
                         )
                     }
+
                     is SyncScreenEvent.ExportDone -> {
                         snackbarHostState.showSnackbar("File saved to ${event.file.name}")
                     }
+
                     is SyncScreenEvent.ImportStart -> {
                         filePickerLauncher.launch()
                     }
+
                     is SyncScreenEvent.ImportDone -> {
                         snackbarHostState.showSnackbar("Imported ${event.entriesImported} entries")
                     }
@@ -101,40 +106,42 @@ object Sync: Screen {
             }
         }
 
-        Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) {data ->
-            Card(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .wrapContentSize(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+        Scaffold(snackbarHost = {
+            SnackbarHost(snackbarHostState) { data ->
+                Card(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .wrapContentSize(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
                 ) {
-                    Text(
-                        text = data.visuals.message,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    if (data.visuals.actionLabel != null) {
-                        TextButton(
-                            onClick = { data.performAction() }
-                        ) {
-                            Text(
-                                text = data.visuals.actionLabel!!,
-                                color = MaterialTheme.colorScheme.primary
-                            )
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = data.visuals.message,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        if (data.visuals.actionLabel != null) {
+                            TextButton(
+                                onClick = { data.performAction() }
+                            ) {
+                                Text(
+                                    text = data.visuals.actionLabel!!,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-        } }, modifier = Modifier.pointerInput(Unit) {
+            }
+        }, modifier = Modifier.pointerInput(Unit) {
             detectTapGestures(onTap = {
                 focusManager.clearFocus()
             })
@@ -202,14 +209,14 @@ object Sync: Screen {
                                     value = state.encryptionPassphrase,
                                     onValueChange = { viewModel.updateEncryptionPassphrase(it) },
                                     label = { Text("Enter passphrase") },
-                                    isError = state.encryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledEncryptionPassphrase,
+                                    isError = state.encryptionPassphrase.length < viewModel.requiredPassphraseLength && state.enabledEncryptionPassphrase,
                                     keyboardOptions = viewModel.passphraseKeyboardOptions,
                                     visualTransformation = PasswordVisualTransformation(),
                                 )
 
-                                if (state.encryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledEncryptionPassphrase) {
+                                if (state.encryptionPassphrase.length < viewModel.requiredPassphraseLength && state.enabledEncryptionPassphrase) {
                                     Text(
-                                        text = "Passphrase must be at least ${viewModel.REQUIRED_PASSPHRASE_LENGTH} characters",
+                                        text = "Passphrase must be at least ${viewModel.requiredPassphraseLength} characters",
                                         color = MaterialTheme.colorScheme.error,
                                         style = MaterialTheme.typography.bodySmall
                                     )
@@ -229,7 +236,7 @@ object Sync: Screen {
                                 focusManager.clearFocus()
                                 viewModel.exportData()
                             },
-                            enabled = state.encryptionPassphrase.length >= viewModel.REQUIRED_PASSPHRASE_LENGTH,
+                            enabled = state.encryptionPassphrase.length >= viewModel.requiredPassphraseLength,
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text("Export Data")
@@ -265,14 +272,14 @@ object Sync: Screen {
                                     value = state.decryptionPassphrase,
                                     onValueChange = { viewModel.updateDecryptionPassphrase(it) },
                                     label = { Text("Enter passphrase") },
-                                    isError = state.decryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledDecryptionPassphrase,
+                                    isError = state.decryptionPassphrase.length < viewModel.requiredPassphraseLength && state.enabledDecryptionPassphrase,
                                     keyboardOptions = viewModel.passphraseKeyboardOptions,
                                     visualTransformation = PasswordVisualTransformation()
                                 )
 
-                                if (state.decryptionPassphrase.length < viewModel.REQUIRED_PASSPHRASE_LENGTH && state.enabledDecryptionPassphrase) {
+                                if (state.decryptionPassphrase.length < viewModel.requiredPassphraseLength && state.enabledDecryptionPassphrase) {
                                     Text(
-                                        text = "Passphrase must be at least ${viewModel.REQUIRED_PASSPHRASE_LENGTH} characters",
+                                        text = "Passphrase must be at least ${viewModel.requiredPassphraseLength} characters",
                                         color = MaterialTheme.colorScheme.error,
                                         style = MaterialTheme.typography.bodySmall
                                     )
@@ -309,7 +316,7 @@ object Sync: Screen {
             if (isDateRangePickerVisible) {
                 DateRangePickerDialogue(
                     onDismiss = { isDateRangePickerVisible = false },
-                    onConfirm = {startDate, endDate ->
+                    onConfirm = { startDate, endDate ->
                         viewModel.updateDateRange(startDate, endDate)
                         isDateRangePickerVisible = false
                     }

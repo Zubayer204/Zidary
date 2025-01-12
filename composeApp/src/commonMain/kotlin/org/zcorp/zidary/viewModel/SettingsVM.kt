@@ -29,7 +29,7 @@ import org.zcorp.zidary.model.data.ThemeMode
 
 class SettingsVM(
     private val settingsManager: SettingsManager,
-): ViewModel() {
+) : ViewModel() {
     private val alarmeeWritingReminderUUID = "writing_reminder"
     private val currentTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
@@ -90,6 +90,7 @@ class SettingsVM(
                             showSampleNotification(alarmeeScheduler)
                             enableWritingReminder(alarmeeScheduler)
                         }
+
                         else -> {
                             print("requesting permission")
                             requestPermission()
@@ -115,10 +116,12 @@ class SettingsVM(
                     showSampleNotification(alarmeeScheduler)
                     enableWritingReminder(alarmeeScheduler)
                 }
+
                 permissionStatus.shouldShowRationale -> {
                     _events.send(SettingsEvent.ShowError("Notifications permissions must be granted for reminder functionality to work"))
                     disableWritingReminder(alarmeeScheduler)
                 }
+
                 permissionStatus.isNotGranted -> {
                     disableWritingReminder(alarmeeScheduler)
                 }

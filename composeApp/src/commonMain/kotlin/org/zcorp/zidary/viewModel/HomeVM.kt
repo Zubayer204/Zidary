@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import org.zcorp.zidary.db.JournalEntry
 import org.zcorp.zidary.model.data.JournalFactory
 
-class HomeVM(private val journalFactory: JournalFactory): ViewModel() {
+class HomeVM(private val journalFactory: JournalFactory) : ViewModel() {
     private val _state = MutableStateFlow(HomeScreenState())
     val state = _state.asStateFlow()
 
@@ -55,10 +55,12 @@ class HomeVM(private val journalFactory: JournalFactory): ViewModel() {
     private suspend fun loadEntries() {
         journalFactory.getAll()
             .collect { entries ->
-                _state.update { it.copy(
-                    journalEntries = entries,
-                    isLoading = false
-                ) }
+                _state.update {
+                    it.copy(
+                        journalEntries = entries,
+                        isLoading = false
+                    )
+                }
             }
     }
 

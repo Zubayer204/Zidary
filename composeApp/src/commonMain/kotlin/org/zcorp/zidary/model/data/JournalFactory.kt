@@ -28,10 +28,22 @@ interface JournalFactoryInterface {
     fun getById(id: Long): Flow<JournalEntry>
     suspend fun insert(title: String, body: String, entryTime: Instant)
     fun update(id: Long, title: String, body: String, entryTime: Instant): Flow<JournalEntry>
-    suspend fun upsert(id: Long, title: String, body: String, entryTime: Instant, createdAt: Instant, modifiedAt: Instant)
+    suspend fun upsert(
+        id: Long,
+        title: String,
+        body: String,
+        entryTime: Instant,
+        createdAt: Instant,
+        modifiedAt: Instant
+    )
+
     suspend fun delete(id: Long)
     fun getEntriesByMonth(year: Int, month: Month): Flow<List<JournalEntry>>
-    suspend fun getEntriesByDateRange(startDate: LocalDate, endDate: LocalDate): Flow<List<JournalEntry>>
+    suspend fun getEntriesByDateRange(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Flow<List<JournalEntry>>
+
     fun getEntriesByDate(date: LocalDate): Flow<List<JournalEntry>>
     fun getEntryDatesForMonth(year: Int, month: Month): Flow<List<LocalDate>>
 
@@ -43,7 +55,7 @@ interface JournalFactoryInterface {
     fun getTotalEntries(): Long
 }
 
-class JournalFactory(database: ZidaryDatabase): JournalFactoryInterface {
+class JournalFactory(database: ZidaryDatabase) : JournalFactoryInterface {
     private val queries = database.journalEntryQueries
 
 
@@ -68,7 +80,12 @@ class JournalFactory(database: ZidaryDatabase): JournalFactoryInterface {
         }
     }
 
-    override fun update(id: Long, title: String, body: String, entryTime: Instant): Flow<JournalEntry> = run {
+    override fun update(
+        id: Long,
+        title: String,
+        body: String,
+        entryTime: Instant
+    ): Flow<JournalEntry> = run {
         val now = Clock.System.now()
         queries.updateJournalEntry(
             title,
@@ -80,7 +97,14 @@ class JournalFactory(database: ZidaryDatabase): JournalFactoryInterface {
         getById(id)
     }
 
-    override suspend fun upsert(id: Long, title: String, body: String, entryTime: Instant, createdAt: Instant, modifiedAt: Instant) {
+    override suspend fun upsert(
+        id: Long,
+        title: String,
+        body: String,
+        entryTime: Instant,
+        createdAt: Instant,
+        modifiedAt: Instant
+    ) {
         withContext(Dispatchers.IO) {
             queries.upsertJournalEntry(
                 id,

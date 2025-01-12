@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
-import androidx.compose.runtime.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.tab.CurrentTab
@@ -36,21 +39,24 @@ fun App() {
 
             key(appearanceSettings) {
                 AppTheme {
-                    Scaffold (
+                    Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         bottomBar = {
                             Column {
-                                NavigationBar (contentColor = MaterialTheme.colorScheme.surfaceContainer, ) {
+                                NavigationBar(contentColor = MaterialTheme.colorScheme.surfaceContainer) {
                                     TabNavigationItem(HomeTab)
                                     TabNavigationItem(CalendarTab)
                                     TabNavigationItem(SyncTab)
                                     TabNavigationItem(SettingsTab)
                                 }
-                                Spacer(modifier = Modifier.fillMaxWidth().height(20.dp).background(MaterialTheme.colorScheme.surfaceContainer))
+                                Spacer(
+                                    modifier = Modifier.fillMaxWidth().height(20.dp)
+                                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                                )
                             }
                         },
                         content = {
-                            Column (
+                            Column(
                                 modifier = Modifier.padding(it)
                             ) {
                                 CurrentTab()

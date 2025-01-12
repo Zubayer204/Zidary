@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,7 +32,7 @@ import org.zcorp.zidary.view.components.settings.SecuritySection
 import org.zcorp.zidary.viewModel.SettingsEvent
 import org.zcorp.zidary.viewModel.SettingsVM
 
-class Settings: Screen {
+class Settings : Screen {
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
     @Composable
     override fun Content() {
@@ -53,6 +53,7 @@ class Settings: Screen {
                             withDismissAction = true
                         )
                     }
+
                     is SettingsEvent.SettingsUpdated -> {
                         snackbarHostState.showSnackbar(
                             message = event.message,

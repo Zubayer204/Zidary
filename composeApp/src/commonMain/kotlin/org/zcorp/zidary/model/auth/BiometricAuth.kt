@@ -3,6 +3,7 @@ package org.zcorp.zidary.model.auth
 import androidx.compose.runtime.Composable
 
 interface PlatformContext
+
 @Composable
 expect fun getPlatformContext(): PlatformContext
 

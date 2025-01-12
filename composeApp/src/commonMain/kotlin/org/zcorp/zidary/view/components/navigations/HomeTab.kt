@@ -9,12 +9,9 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import cafe.adriel.voyager.transitions.SlideTransition
-import org.koin.compose.koinInject
 import org.zcorp.zidary.view.screens.Home
-import org.zcorp.zidary.viewModel.HomeVM
-import org.zcorp.zidary.viewModel.JournalComposeVM
 
-object HomeTab: Tab {
+object HomeTab : Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -32,7 +29,7 @@ object HomeTab: Tab {
 
     @Composable
     override fun Content() {
-        Navigator(screen = Home) {navigator: Navigator ->
+        Navigator(screen = Home) { navigator: Navigator ->
             SlideTransition(navigator)
         }
     }

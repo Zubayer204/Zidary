@@ -1,4 +1,5 @@
 package org.zcorp.zidary.view.components
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -68,7 +69,8 @@ fun DateTimeSelector(
         // Date Picker Dialog
         if (showDatePicker) {
             val datePickerState = rememberDatePickerState(
-                initialSelectedDateMillis = selectedDate.toEpochDays().toLong() * 24 * 60 * 60 * 1000
+                initialSelectedDateMillis = selectedDate.toEpochDays()
+                    .toLong() * 24 * 60 * 60 * 1000
             )
 
             DatePickerDialog(
@@ -79,7 +81,11 @@ fun DateTimeSelector(
                             val instant = Instant.fromEpochMilliseconds(it)
                             val date = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
                             selectedDate = date
-                            onDateTimeSelected(LocalDateTime(selectedDate, selectedTime).toInstant(TimeZone.currentSystemDefault()))
+                            onDateTimeSelected(
+                                LocalDateTime(selectedDate, selectedTime).toInstant(
+                                    TimeZone.currentSystemDefault()
+                                )
+                            )
                         }
                         showDatePicker = false
                     }) {
@@ -112,7 +118,12 @@ fun DateTimeSelector(
                         hour = timePickerState.hour,
                         minute = timePickerState.minute
                     )
-                    onDateTimeSelected(LocalDateTime(selectedDate, selectedTime).toInstant(TimeZone.currentSystemDefault()))
+                    onDateTimeSelected(
+                        LocalDateTime(
+                            selectedDate,
+                            selectedTime
+                        ).toInstant(TimeZone.currentSystemDefault())
+                    )
                     showTimePicker = false
                 },
                 onDismiss = { showTimePicker = false }

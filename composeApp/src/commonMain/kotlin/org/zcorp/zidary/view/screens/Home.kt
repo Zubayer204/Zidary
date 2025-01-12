@@ -1,7 +1,6 @@
 package org.zcorp.zidary.view.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,14 +9,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,7 +50,7 @@ import org.zcorp.zidary.viewModel.HomeVM
 import org.zcorp.zidary.viewModel.JournalComposeVM
 import org.zcorp.zidary.viewModel.SettingsManager
 
-object Home: Screen {
+object Home : Screen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
@@ -78,12 +78,15 @@ object Home: Screen {
                             journalComposeVM
                         ) { navigator.pop() })
                     }
+
                     is HomeScreenEvent.NavigateToView -> {
                         navigator.push(JournalView(event.entry) { navigator.pop() })
                     }
+
                     is HomeScreenEvent.EntryDeleted -> {
                         snackbarHostState.showSnackbar("Entry Deleted")
                     }
+
                     is HomeScreenEvent.ShowError -> {
                         snackbarHostState.showSnackbar("Error: ${event.message}")
                     }
@@ -91,7 +94,7 @@ object Home: Screen {
             }
         }
 
-        Box (
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
@@ -99,7 +102,13 @@ object Home: Screen {
             if (viewModel.totalEntries() == 0L) {
                 TextEntryAnimation(
                     headlineText = "Let's write",
-                    subheadlineTextList = listOf("", "thoughts...", "memories...", "stories...", "life..."),
+                    subheadlineTextList = listOf(
+                        "",
+                        "thoughts...",
+                        "memories...",
+                        "stories...",
+                        "life..."
+                    ),
                     headlineTextStyle = TextStyle(
                         fontFamily = GreatVibes(),
                         fontSize = 84.sp,
@@ -115,7 +124,7 @@ object Home: Screen {
                         .padding(16.dp)
                 )
             }
-            LazyColumn (
+            LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(vertical = 16.dp),
             ) {
@@ -142,7 +151,12 @@ object Home: Screen {
             }
             GlowingFAB(
                 onClick = {
-                    navigator.push(JournalCompose(journalComposeVM, onNavigateBack = ({ navigator.pop() })))
+                    navigator.push(
+                        JournalCompose(
+                            journalComposeVM,
+                            onNavigateBack = ({ navigator.pop() })
+                        )
+                    )
                 },
                 modifier = Modifier
                     .size(96.dp)

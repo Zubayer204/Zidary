@@ -31,7 +31,8 @@ fun AppearanceSection(
             valueToString = { it ->
                 it.name.lowercase()
                     .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-                    .replace("_", " ")}
+                    .replace("_", " ")
+            }
         )
 
         // Accent Color

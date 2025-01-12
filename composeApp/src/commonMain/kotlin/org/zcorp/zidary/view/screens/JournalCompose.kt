@@ -50,7 +50,10 @@ import org.zcorp.zidary.viewModel.JournalComposeVM
 
 private const val DEFAULT_ANIMATION_DURATION = 700 // in milliseconds
 
-class JournalCompose(private val viewModel: JournalComposeVM, private val onNavigateBack: () -> Unit): Screen {
+class JournalCompose(
+    private val viewModel: JournalComposeVM,
+    private val onNavigateBack: () -> Unit
+) : Screen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
@@ -61,11 +64,12 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
         val appBarTitle = if (state.isEditMode) "Edit Entry" else "New Entry"
 
         LaunchedEffect(Unit) {
-            viewModel.events.collect {event ->
+            viewModel.events.collect { event ->
                 when (event) {
                     is JournalComposeEvent.EntryAdded -> {
                         onNavigateBack()
                     }
+
                     is JournalComposeEvent.ShowError -> {
                         snackBarHostState.showSnackbar(event.message)
                     }
@@ -82,8 +86,8 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
                     }
                 }
             )
-        }) {padding ->
-            Column (
+        }) { padding ->
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
@@ -128,7 +132,9 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
                                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                                 contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
                                 disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.3f)
+                                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                    0.3f
+                                )
                             ),
                         )
                     }
@@ -151,7 +157,9 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
                         .fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+                            alpha = 0.3f
+                        ),
                         focusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
                     ),
@@ -181,7 +189,9 @@ class JournalCompose(private val viewModel: JournalComposeVM, private val onNavi
                         .height(300.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+                            alpha = 0.3f
+                        ),
                         focusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
                     ),

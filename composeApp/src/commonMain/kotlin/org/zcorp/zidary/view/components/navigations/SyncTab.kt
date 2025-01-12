@@ -9,11 +9,9 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import cafe.adriel.voyager.transitions.FadeTransition
-import org.koin.compose.koinInject
 import org.zcorp.zidary.view.screens.Sync
-import org.zcorp.zidary.viewModel.SyncVM
 
-object SyncTab: Tab {
+object SyncTab : Tab {
     override val options: TabOptions
         @Composable
         get() {

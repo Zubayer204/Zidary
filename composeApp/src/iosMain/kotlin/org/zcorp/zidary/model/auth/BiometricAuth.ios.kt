@@ -4,16 +4,12 @@ import androidx.compose.runtime.Composable
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import platform.LocalAuthentication.LAContext
-import platform.Foundation.NSError
-import platform.LocalAuthentication.LABiometryTypeFaceID
-import platform.LocalAuthentication.LABiometryTypeOpticID
-import platform.LocalAuthentication.LABiometryTypeTouchID
 import platform.LocalAuthentication.LAPolicyDeviceOwnerAuthenticationWithBiometrics
 import platform.LocalAuthentication.kLAErrorAuthenticationFailed
 import platform.LocalAuthentication.kLAErrorUserCancel
 import kotlin.coroutines.resume
 
-class IOSBiometricAuthenticator: BiometricAuthenticator {
+class IOSBiometricAuthenticator : BiometricAuthenticator {
     @OptIn(ExperimentalForeignApi::class)
     override suspend fun authenticate(): Boolean = suspendCancellableCoroutine { continuation ->
         val context = LAContext()
@@ -25,7 +21,10 @@ class IOSBiometricAuthenticator: BiometricAuthenticator {
                 when {
                     success -> continuation.resume(true)
                     error?.code?.toInt() == kLAErrorUserCancel -> continuation.resume(false)
-                    error?.code?.toInt() == kLAErrorAuthenticationFailed -> continuation.resume(false)
+                    error?.code?.toInt() == kLAErrorAuthenticationFailed -> continuation.resume(
+                        false
+                    )
+
                     else -> continuation.resume(false)
                 }
             }
@@ -40,4 +39,5 @@ object IOSPlatformContext : PlatformContext
 @Composable
 actual fun getPlatformContext(): PlatformContext = IOSPlatformContext
 
-actual fun getBiometricAuthenticator(context: PlatformContext): BiometricAuthenticator = IOSBiometricAuthenticator()
+actual fun getBiometricAuthenticator(context: PlatformContext): BiometricAuthenticator =
+    IOSBiometricAuthenticator()

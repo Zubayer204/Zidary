@@ -90,7 +90,7 @@ private val darkScheme = darkColorScheme(
 @Composable
 fun AppTheme(
     settingsManager: SettingsManager = koinInject(),
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val appearanceSettings by settingsManager.appearanceSettings.collectAsState()
 

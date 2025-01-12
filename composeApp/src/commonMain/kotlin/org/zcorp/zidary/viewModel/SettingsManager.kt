@@ -5,11 +5,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.zcorp.zidary.model.data.AppearanceSettings
-import org.zcorp.zidary.model.data.AvailableFontFamily
 import org.zcorp.zidary.model.data.GeneralSettings
 import org.zcorp.zidary.model.data.SecuritySettings
 import org.zcorp.zidary.model.data.SettingsRepository
-import org.zcorp.zidary.model.data.ThemeMode
 
 class SettingsManager(
     private val settingsRepository: SettingsRepository
@@ -44,10 +42,5 @@ class SettingsManager(
         _securitySettings.update { settings }
     }
 
-    fun getCurrentTheme(): ThemeMode = appearanceSettings.value.themeMode
-    fun getCurrentFontFamily(): AvailableFontFamily = appearanceSettings.value.fontFamily
-    fun getAccentColor(): Long? = appearanceSettings.value.accentColor
-
     fun isBiometricLockEnabled(): Boolean = securitySettings.value.useBiometricLock
-    fun shouldHideEntryPreviews(): Boolean = securitySettings.value.hideEntryPreviews
 }

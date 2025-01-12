@@ -10,7 +10,7 @@ class JournalEdit(
     private val entryId: Long,
     private val viewModel: JournalComposeVM,
     private val onNavigateBack: () -> Unit
-): Screen {
+) : Screen {
     @Composable
     override fun Content() {
         LaunchedEffect(entryId) {
