@@ -19,7 +19,7 @@ fun AppearanceSection(
             selectedValue = settings.themeMode,
             values = ThemeMode.entries,
             onValueSelected = onThemeChanged,
-            valueToString = { it.name.lowercase().capitalize() }
+            valueToString = { it.name.lowercase().replaceFirstChar { char -> char.titlecase() } }
         )
 
         // Font Family
